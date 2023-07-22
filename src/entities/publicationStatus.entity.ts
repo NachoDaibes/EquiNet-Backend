@@ -1,19 +1,21 @@
-import { Column, Entity } from "typeorm";
-import { Type } from "./type.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IsDate, IsObject } from "class-validator";
+import { Type } from "./type.entity";
 
-@Entity({name: 'publication_status'})
+@Entity({name: 'PublicationStatus'})
 export class PublicationStatus{
 
-    @Column({name: 'publication_status_type'})
-    @IsObject()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @OneToOne(() => Type)
+    @JoinColumn({name: 'publicationStatusType_Id'})
     publicationStatusType: Type
 
-    @Column({name: 'publication_status_reason_type'})
-    @IsObject()
+    @OneToOne(() => Type)
+    @JoinColumn({name: 'publicationStatusReasonType_Id'})
     publicationStatusReasonType: Type
 
-    @Column({name: 'status_registration_datetime'})
-    @IsDate()
+    @Column({name: 'statusRegistrationDatetime'})
     statusRegistrationDateTime: Date
 }

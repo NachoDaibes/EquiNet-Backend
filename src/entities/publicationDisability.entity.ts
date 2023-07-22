@@ -1,16 +1,19 @@
 import { IsObject } from "class-validator";
 import { Disability } from "./disability.entity";
 import { Publication } from "./publication.entity";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({name: 'publication_disability'})
+@Entity({name: 'PublicationDisability'})
 export class PublicationDisability{
 
-    @Column({name: 'disability'})
-    @IsObject()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @ManyToOne(() => Disability, (disability) => disability.publicationDisability)
+    @JoinColumn({name: 'disability_Id'})
     disability: Disability
 
-    @Column({name: 'publication'})
-    @IsObject()
+    @ManyToOne(() => Publication, (publication) => publication.publicationDisability)
+    @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }

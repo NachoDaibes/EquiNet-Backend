@@ -1,19 +1,24 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Disability } from "./disability.entity";
 import { Type } from "./type.entity";
-import { IsDate, IsObject } from "class-validator";
 
-@Entity({name: 'disability_status'})
+@Entity({name: 'DisabilityStatus'})
 export class DisabilityStatus{
 
-    @Column({name: 'disability_status_type'})
-    @IsObject()
-    disabilityStatusType: Type
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
 
-    @Column({name: 'disability_status_reason_type'})
-    @IsObject()
+    @OneToOne(() => Type)
+    @JoinColumn({name: 'disabilityStatusType_Id'})
+    disabilityStatusType: Type
+    
+    @OneToOne(() => Type)
+    @JoinColumn({name: 'disabilityStatusReasonType_Id'})
     disabilityStatusReasonType: Type
 
-    @Column({name: 'status_registration_datetime'})
-    @IsDate()
+    @Column({name: 'statusRegistrationDatetime'})
     statusRegistrationDateTime: Date
+
+    @OneToMany(() => Disability, (disability) => disability.disabilityStatus)
+    disability: Disability[]
 }

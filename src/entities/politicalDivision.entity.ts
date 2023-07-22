@@ -1,13 +1,16 @@
 import { IsString } from "class-validator";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Department } from "./department.entity";
 
-@Entity({name: 'political_division'})
+@Entity({name: 'PoliticalDivision'})
 export class PoliticalDivision {
 
-    @Column({name: 'name'})
-    @IsString()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @Column({name: 'name', length: 50})
     name: string
 
+    @OneToMany(() => Department, (department) => department.politicalDivision)
     department: Department[]
 }

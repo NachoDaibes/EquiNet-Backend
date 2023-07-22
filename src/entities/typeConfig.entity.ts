@@ -1,21 +1,19 @@
-import { IsNumber, IsString } from "class-validator"
-import { Column } from "typeorm"
+import { IsString } from "class-validator"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Type } from "./type.entity"
 
+@Entity({name: 'TypeConfig'})
 export class TypeConfig{
+    
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
 
-    @Column({name: 'name'})
-    @IsString()
+    @Column({name: 'name', length: 20})
     name: string
 
-    @Column({name: 'code'})
-    @IsString()
+    @Column({name: 'code', length: 20})
     code: string
 
-    @Column({name: 'order'})
-    @IsNumber()
-    order: number
-
-    @Column({name: 'filter'})
-    @IsString()
-    filter: string
+    @OneToMany(() => Type, (type) => type.typeConfig)
+    type: Type[]
 }

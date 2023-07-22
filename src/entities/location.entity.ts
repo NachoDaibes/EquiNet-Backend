@@ -1,15 +1,17 @@
 import { IsObject, IsString } from "class-validator"
 import { Department } from "./department.entity"
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
-@Entity({name: 'location'})
+@Entity({name: 'Location'})
 export class Location{
 
-    @Column({name: 'name'})
-    @IsString()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @Column({name: 'name', length: 50})
     name: string
 
-    @ManyToOne(() => Department, (department) => department)
-    @JoinColumn({name: 'Department'})
+    @ManyToOne(() => Department, (department) => department.location)
+    @JoinColumn({name: 'department_Id'})
     department: Department
 }

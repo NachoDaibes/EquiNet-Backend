@@ -1,24 +1,28 @@
 import { IsObject, IsString } from "class-validator"
+import { Column, Entity, OneToMany } from "typeorm"
+import { PublicationDisability } from "./publicationDisability.entity"
 import { Type } from "./type.entity"
-import { Column, Entity } from "typeorm"
+import { PublicationCategory } from "./publicationCategory.entity"
 
-@Entity({name: 'publication'})
+@Entity({name: 'Publication'})
 export class Publication{
 
     @Column({name: 'title'})
-    @IsString()
     title: string
 
     @Column({name: 'description'})
-    @IsString()
     description: string
 
     @Column({name: 'publicationType'})
-    @IsObject()
     publicationType: Type
 
     image: string
 
     location: string
 
+    @OneToMany(() => PublicationDisability, (publicationDisability) => publicationDisability.publication)
+    publicationDisability: PublicationDisability[]
+
+    @OneToMany(() => PublicationCategory, (publicationCategory) => publicationCategory.publication)
+    publicationCategory: PublicationCategory[]
 }

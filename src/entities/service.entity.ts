@@ -1,23 +1,22 @@
-import { Column, Entity } from "typeorm"
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Publication } from "./publication.entity"
-import { IsObject, IsString } from "class-validator"
 
-@Entity({name: 'service'})
+@Entity({name: 'Service'})
 export class Service{
 
-    @Column({name: 'address'})
-    @IsString()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @Column({name: 'address', length: 50})
     address: string
 
-    @Column({name: 'linkGoogleMaps'})
-    @IsString()
+    @Column({name: 'linkGoogleMaps', length: 256})
     linkGoogleMaps: string
 
-    @Column({name: 'schedule'})
-    @IsString()
+    @Column({name: 'schedule', length: 50})
     schedule: string
 
-    @Column({name: 'publication'})
-    @IsObject()
+    @OneToOne(() => Publication)
+    @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }

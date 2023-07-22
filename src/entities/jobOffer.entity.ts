@@ -1,28 +1,27 @@
-import { IsObject, IsString } from "class-validator"
 import { Publication } from "./publication.entity"
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Type } from "./type.entity"
-import { Column, Entity } from "typeorm"
 
-@Entity({name: 'job_offer'})
+@Entity({name: 'JobOffer'})
 export class JobOffer{
 
-    @Column({name: 'job'})
-    @IsString()
+    @PrimaryGeneratedColumn({name: 'id'})
+    id: number
+
+    @Column({name: 'job', length: 20})
     job: string
 
-    @Column({name: 'requeriments'})
-    @IsString()
+    @Column({name: 'requeriments', length: 100})
     requeriments: string
 
-    @Column({name: 'offerType'})
-    @IsObject()
+    @OneToOne(() => Type)
+    @JoinColumn({name: 'offerType_Id'})
     offerType: Type
 
-    @Column({name: 'tasks'})
-    @IsString()
+    @Column({name: 'tasks', length: 100})
     tasks: string
 
-    @Column({name: 'publication'})
-    @IsObject()
+    @OneToOne(()=> Publication)
+    @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }
