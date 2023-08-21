@@ -1,7 +1,11 @@
+
+import { Type } from "src/entities/type.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Type } from "./type.entity";
 import { UserStatus } from "./userStatus.entity";
-import { ProfileUser } from "./profileUser.entity";
+import { LegalPerson } from "./legalPerson.entity";
+import { IndividualPerson } from "./individualPerson.entity";
+import { UserUserType } from "./userUserType.entity";
+
 
 @Entity({name: 'User'})
 export class User{
@@ -21,9 +25,18 @@ export class User{
     @Column({name: 'image', length: 256})
     image: string
 
-    @Column({name: 'isAdvanced'})
-    isAdvanced: boolean
+    @Column({name: 'failLoginCount'})
+    failLoginCount: number
 
+    @Column({name: 'lastLogin'})
+    lastLogin: Date
+
+    @Column({name: 'sessionOpen'})
+    sessionOpen: number
+
+    @Column({name: 'sessionId'})
+    sessionId: number
+    
     @OneToOne(() => Type)
     @JoinColumn({name: 'userType'})
     usertype: Type
@@ -31,6 +44,12 @@ export class User{
     @OneToMany(() => UserStatus, (userStatus) => userStatus.user)
     userStatus: UserStatus[]
 
-    @OneToMany(() => ProfileUser, (profileUser) => profileUser.user)
-    profileUser: ProfileUser[]
+    @OneToMany(() => LegalPerson, (legalPerson) => legalPerson.user)
+    legalPerson: LegalPerson[]
+
+    @OneToMany(() => IndividualPerson, (individualPerson) => individualPerson.user)
+    individualPerson: IndividualPerson[]
+
+    @OneToMany(() => UserUserType, (userUserType) => userUserType.user)
+    userUserType: UserUserType[]
 }

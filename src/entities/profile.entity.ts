@@ -1,7 +1,7 @@
-import { IsBoolean, IsString } from "class-validator"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { ProfileAccess } from "./profileAcces.entity"
-import { ProfileUser } from "./profileUser.entity"
+import { ProfileStatus } from "./profileStatus.entity"
+import { UserTypeProfile } from "./userTypeProfile.entity"
+import { ProfileAccess } from "./profileAccess.entity"
 
 @Entity({name: 'Profile'})
 export class Profile{
@@ -9,15 +9,15 @@ export class Profile{
     @PrimaryGeneratedColumn({name: 'id'})
     id: number
 
-    @Column({name: 'name'})
+    @Column({name: 'name', length: 20})
     name: string
 
-    @Column({name: 'active'})
-    active: boolean
+    @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profile)
+    profileStatus: ProfileStatus[]
+
+    @OneToMany(() => UserTypeProfile, (userTypeProfile) => userTypeProfile.profile)
+    userTypeProfile: UserTypeProfile[]
 
     @OneToMany(() => ProfileAccess, (profileAccess) => profileAccess.profile)
     profileAccess: ProfileAccess[]
-
-    @OneToMany(() => ProfileUser, (profileUser) => profileUser.profile)
-    profileUser: ProfileUser[]
 }

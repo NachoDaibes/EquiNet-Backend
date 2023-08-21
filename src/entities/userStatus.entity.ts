@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Type } from "./type.entity";
 import { User } from "./user.entity";
+import { Type } from "./type.entity";
 
 @Entity({name: 'UserStatus'})
 export class UserStatus{
@@ -20,5 +20,6 @@ export class UserStatus{
     statusRegistrationDateTime: Date
 
     @ManyToOne(() => User, (user) => user.userStatus)
+    @JoinColumn({name: 'user_Id'})
     user: User
 }
