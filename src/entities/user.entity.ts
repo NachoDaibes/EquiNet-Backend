@@ -13,28 +13,28 @@ export class User{
     @PrimaryGeneratedColumn({name: 'id'})
     id: number
 
-    @Column({name: 'username', length: 20})
+    @Column({name: 'username', length: 20, nullable: true})
     username: string
 
-    @Column({name: 'email', length: 256})
+    @Column({name: 'email', length: 256, nullable: true})
     email: string
 
-    @Column({name: 'password', length: 127})
+    @Column({name: 'password', length: 127, nullable: true})
     password: string
 
-    @Column({name: 'image', length: 256})
+    @Column({name: 'image', length: 256, nullable: true})
     image: string
 
-    @Column({name: 'failLoginCount'})
+    @Column({name: 'failLoginCount', nullable: true})
     failLoginCount: number
 
-    @Column({name: 'lastLogin'})
+    @Column({name: 'lastLogin', nullable: true})
     lastLogin: Date
 
-    @Column({name: 'sessionOpen'})
+    @Column({name: 'sessionOpen', nullable: true})
     sessionOpen: number
 
-    @Column({name: 'sessionId'})
+    @Column({name: 'sessionId', nullable: true})
     sessionId: number
     
     @OneToOne(() => Type)

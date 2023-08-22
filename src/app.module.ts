@@ -23,6 +23,9 @@ import { UserTypeProfile } from './entities/userTypeProfile.entity';
 import { UserTypeStatus } from './entities/userTypeStatus.entity';
 import { UserUserType } from './entities/userUserType.entity';
 import { UserUserTypeStatus } from './entities/userUserTypeStatus.entity';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { PublicationModule } from './publication/publication.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
@@ -32,27 +35,33 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: '127.0.0.1',
-      port: 3306,
-      username: 'root',
+      port: 1433,
+      username: 'sa',
       password: 'Kalijose-25',
-      database: 'EquiNetDev2',
-      entities: [User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile, 
-        ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, UserType, UserTypeProfile, 
+      database: 'EquiNetDev',
+      entities: [User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
+        ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, UserType, UserTypeProfile,
         UserTypeStatus, UserUserType, UserUserTypeStatus],
-      synchronize: true
-      
+      synchronize: true,
+      migrationsRun: true,
+      options: {
+        encrypt: false
+      }
       // imports: [ConfigModule],
       // useFactory: (configService: ConfigService) =>Config,
-    // inject:[ConfigService]
-  }),
+      // inject:[ConfigService]
+    }),
+    AuthModule, 
+    UserModule,
+    PublicationModule,
     ScheduleModule.forRoot(),
 
-    ],
-  controllers: [AppController ],
+  ],
+  controllers: [AppController],
   providers: [AppService]
 })
 export class AppModule {
 
-  constructor(private dataSource: DataSource) {}
+  constructor(private dataSource: DataSource) { }
 
 }

@@ -1,26 +1,69 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { HttpException, Injectable } from '@nestjs/common';
+import { RegisterAuthDto } from './dto/registerAuth.dto';
+import { LoginAuthDto } from './dto/loginAuth.dto';
+import { hash, compare } from 'bcrypt'
+import { User } from 'src/entities/user.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager
+  ){}
+
+  async registerUser(registerAuthDto: RegisterAuthDto) {
+
+    const { email, password } = registerAuthDto
+    const plainToHash = await hash(password, 10)
+    
+    registerAuthDto = {...registerAuthDto, password:plainToHash}
+  
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email
+      }
+    }) 
+
+    if(user) throw new HttpException('Ya existe un usuario con el email ingresado', 404)
+
+    const u = this.userRepository.create(registerAuthDto)
+
+    let userFinal
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        userFinal = await transaction.save(u)
+      } catch (error) {
+        throw new Error(error);
+      }
+    })
+
+    return user
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async loginUser(loginAuthDto: LoginAuthDto) {
+  
+    const {email, password} = loginAuthDto
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email
+      }
+    }) 
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if(!user) throw new HttpException('User Not Found', 404)
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const checkPassword = await compare(password, user.password)
+
+    if(!checkPassword) throw new HttpException('Incorrect Password', 403)
+
+    const data = user
+
+    return data
+
   }
 }
