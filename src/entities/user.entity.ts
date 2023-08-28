@@ -5,6 +5,7 @@ import { UserStatus } from "./userStatus.entity";
 import { LegalPerson } from "./legalPerson.entity";
 import { IndividualPerson } from "./individualPerson.entity";
 import { UserUserType } from "./userUserType.entity";
+import { News } from "./news.entity";
 
 
 @Entity({name: 'User'})
@@ -52,4 +53,7 @@ export class User{
 
     @OneToMany(() => UserUserType, (userUserType) => userUserType.user)
     userUserType: UserUserType[]
+
+    @OneToMany(() => News, (news) => news.creator)
+    news: News[]
 }

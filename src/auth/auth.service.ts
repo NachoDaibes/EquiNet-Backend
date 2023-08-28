@@ -5,6 +5,7 @@ import { hash, compare } from 'bcrypt'
 import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,8 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectEntityManager()
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
+    private jwtAuthService: JwtService
   ){}
 
   async registerUser(registerAuthDto: RegisterAuthDto) {
@@ -60,8 +62,17 @@ export class AuthService {
     const checkPassword = await compare(password, user.password)
 
     if(!checkPassword) throw new HttpException('Incorrect Password', 403)
+  
+    const payload = {
+      id: user.id,
+      username: user.username
+    }
+    const token = await this.jwtAuthService.sign(payload)
 
-    const data = user
+    const data = {
+      user: user,
+      token
+    }
 
     return data
 

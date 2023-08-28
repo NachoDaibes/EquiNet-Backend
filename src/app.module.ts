@@ -26,12 +26,25 @@ import { UserUserTypeStatus } from './entities/userUserTypeStatus.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PublicationModule } from './publication/publication.module';
+import { JwtStrategy } from './auth/jwtStrategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwtAuthGuard';
+import { TypeConfigModule } from './type-config/type-config.module';
+import { TypeModule } from './type/type.module';
+import { News } from './entities/news.entity';
+import { NewsStatus } from './entities/newsStatus.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
+
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (configService: ConfigService) => Config,
+    //   inject: [ConfigService]
+    // }),
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: '127.0.0.1',
@@ -41,7 +54,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       database: 'EquiNetDev',
       entities: [User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, UserType, UserTypeProfile,
-        UserTypeStatus, UserUserType, UserUserTypeStatus],
+        UserTypeStatus, UserUserType, UserUserTypeStatus, News, NewsStatus],
       synchronize: true,
       migrationsRun: true,
       options: {
@@ -51,14 +64,21 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       // useFactory: (configService: ConfigService) =>Config,
       // inject:[ConfigService]
     }),
+    ScheduleModule.forRoot(),
     AuthModule, 
     UserModule,
     PublicationModule,
-    ScheduleModule.forRoot(),
+    TypeConfigModule,
+    TypeModule,
 
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // }
+  ]
 })
 export class AppModule {
 

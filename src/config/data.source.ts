@@ -56,11 +56,8 @@ console.log("DATABASE_HOST:"+process.env.DATABASE_HOST)
         idleTimeoutMillis: 30000
       },
       options:{
-        appName:process.env.WEBSITE_SITE_NAME,
         encrypt: false,
-        
       },
-      logging: process.env.NODE_DEBUG === 'true' ? true: false
 }
 export const AppDataSource: DataSource = new DataSource(Config);
 AppDataSource.initialize();
