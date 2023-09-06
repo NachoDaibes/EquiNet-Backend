@@ -5,12 +5,14 @@ import { Profile } from "./profile.entity"
 @Entity({name: 'ProfileStatus'})
 export class ProfileStatus{
     
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
+    @ManyToOne(() => Type, (type) => type.profileStatus)
     @JoinColumn({name: 'profileStatusType_Id'})
     profileStatusType: Type
 
+    @ManyToOne(() => Type, (type) => type.profileStatusReason)
     @JoinColumn({name: 'profileStatusReasonType_Id'})
     profileStatusReasonType: Type
 

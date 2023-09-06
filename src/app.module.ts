@@ -18,14 +18,8 @@ import { ProfileStatus } from './entities/profileStatus.entity';
 import { Type } from './entities/type.entity';
 import { TypeConfig } from './entities/typeConfig.entity';
 import { UserStatus } from './entities/userStatus.entity';
-import { UserType } from './entities/userType.entity';
-import { UserTypeProfile } from './entities/userTypeProfile.entity';
-import { UserTypeStatus } from './entities/userTypeStatus.entity';
-import { UserUserType } from './entities/userUserType.entity';
-import { UserUserTypeStatus } from './entities/userUserTypeStatus.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { PublicationModule } from './publication/publication.module';
 import { JwtStrategy } from './auth/jwtStrategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwtAuthGuard';
@@ -33,6 +27,10 @@ import { TypeConfigModule } from './type-config/type-config.module';
 import { TypeModule } from './type/type.module';
 import { News } from './entities/news.entity';
 import { NewsStatus } from './entities/newsStatus.entity';
+import { ProfileType } from './entities/profileType.entity';
+import { UserProfileStatus } from './entities/userProfileStatus';
+import { UserProfile } from './entities/userProfile.entity';
+import { ProfileTypeStatus } from './entities/profileTypeStatus.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
@@ -52,9 +50,11 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       username: 'sa',
       password: 'Kalijose-25',
       database: 'EquiNetDev',
-      entities: [User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
-        ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, UserType, UserTypeProfile,
-        UserTypeStatus, UserUserType, UserUserTypeStatus, News, NewsStatus],
+      entities: [User, Access,
+         AccessStatus, IndividualPerson, LegalPerson, Profile,
+        ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
+        ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus
+      ],
       synchronize: true,
       migrationsRun: true,
       options: {
@@ -67,7 +67,6 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     ScheduleModule.forRoot(),
     AuthModule, 
     UserModule,
-    PublicationModule,
     TypeConfigModule,
     TypeModule,
 

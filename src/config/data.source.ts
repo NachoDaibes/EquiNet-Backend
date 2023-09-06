@@ -12,11 +12,10 @@ import { ProfileStatus } from "src/entities/profileStatus.entity";
 import { Type } from "src/entities/type.entity";
 import { TypeConfig } from "src/entities/typeConfig.entity";
 import { UserStatus } from "src/entities/userStatus.entity";
-import { UserType } from "src/entities/userType.entity";
-import { UserTypeProfile } from "src/entities/userTypeProfile.entity";
-import { UserTypeStatus } from "src/entities/userTypeStatus.entity";
-import { UserUserType } from "src/entities/userUserType.entity";
-import { UserUserTypeStatus } from "src/entities/userUserTypeStatus.entity";
+import { ProfileTypeStatus } from "src/entities/profileTypeStatus.entity";
+import { ProfileType } from "src/entities/profileType.entity";
+import { UserProfileStatus } from "src/entities/userProfileStatus";
+import { UserProfile } from "src/entities/userProfile.entity";
 
 const dest= "dist/common/envs/";
 const env: string | undefined = process.env.NODE_ENV;
@@ -41,8 +40,9 @@ console.log("DATABASE_HOST:"+process.env.DATABASE_HOST)
     database: process.env.DATABASE_NAME,
     //entities: ["dist/**/*.entity{.ts,.js}"],
     entities:[User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile, 
-      ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, UserType, UserTypeProfile, 
-      UserTypeStatus, UserUserType, UserUserTypeStatus],
+      ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, 
+      , UserProfile, ProfileTypeStatus, ProfileType, UserProfileStatus, ProfileType, 
+      ProfileTypeStatus],
     migrations: [dist+"/migrations/*{.ts,.js}"],
     migrationsRun:false,
       synchronize:false,

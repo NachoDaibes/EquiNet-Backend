@@ -5,7 +5,7 @@ import { Profile } from "./profile.entity"
 @Entity({name: 'ProfileAccess'})
 export class ProfileAccess{
 
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @ManyToOne(()=> Profile, (profile) => profile.profileAccess)

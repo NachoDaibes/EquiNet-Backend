@@ -3,7 +3,7 @@ import { User } from "./user.entity"
 
 @Entity({name: 'LegalPerson'})
 export class LegalPerson{
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @Column({name: 'businessName', length: 20})
@@ -24,7 +24,7 @@ export class LegalPerson{
     @Column({name: 'portalUrl', length: 2000})
     portalUrl: string
 
-    @ManyToOne(() => User, (user) => user.legalPerson)
+    @OneToOne(() => User, (user) => user.legalPerson)
     @JoinColumn({name: 'user_Id'})
     user: User
 }

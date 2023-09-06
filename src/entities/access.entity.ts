@@ -5,7 +5,7 @@ import { ProfileAccess } from "./profileAccess.entity"
 @Entity({name: 'Access'})
 export class Access{
 
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @Column({name: 'name', length: 20})

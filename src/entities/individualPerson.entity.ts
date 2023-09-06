@@ -6,7 +6,7 @@ import { Type } from "src/entities/type.entity"
 @Entity({name: 'IndividualPerson'})
 export class IndividualPerson{
 
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @Column({name: 'firstName', length: 20})
@@ -21,7 +21,8 @@ export class IndividualPerson{
     @Column({name: 'contactEmail', length: 256})
     contactEmail: string
 
-    @OneToOne(() => Type)
+    @ManyToOne(() => Type, (type) => type.individualPerson)
+    @JoinColumn({name: 'identityType_Id'})
     identityType: Type
 
     @Column({name: 'identityNumber', length: 15})
@@ -33,7 +34,7 @@ export class IndividualPerson{
     @Column({name: 'cv', length: 50})
     cv: string
 
-    @ManyToOne(() => User, (user) => user.individualPerson)
+    @OneToOne(() => User, (user) => user.individualPerson)
     @JoinColumn({name: 'user_Id'})
     user: User
 }

@@ -4,14 +4,14 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { UserStatus } from "./userStatus.entity";
 import { LegalPerson } from "./legalPerson.entity";
 import { IndividualPerson } from "./individualPerson.entity";
-import { UserUserType } from "./userUserType.entity";
+import { UserProfile } from "./userProfile.entity";
 import { News } from "./news.entity";
 
 
 @Entity({name: 'User'})
 export class User{
 
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @Column({name: 'username', length: 20, nullable: true})
@@ -37,22 +37,20 @@ export class User{
 
     @Column({name: 'sessionId', nullable: true})
     sessionId: number
-    
-    @OneToOne(() => Type)
-    @JoinColumn({name: 'userType'})
-    usertype: Type
 
-    @OneToMany(() => UserStatus, (userStatus) => userStatus.user)
+    @OneToMany(() => UserStatus, (userStatus) => userStatus.user, {cascade: true})
     userStatus: UserStatus[]
 
-    @OneToMany(() => LegalPerson, (legalPerson) => legalPerson.user)
-    legalPerson: LegalPerson[]
+    @OneToOne(() => LegalPerson, (legalPerson) => legalPerson.user, {cascade: true})
+    legalPerson: LegalPerson
 
-    @OneToMany(() => IndividualPerson, (individualPerson) => individualPerson.user)
-    individualPerson: IndividualPerson[]
+    @OneToOne(() => IndividualPerson, (individualPerson) => individualPerson.user, {cascade: true})
+    individualPerson: IndividualPerson
 
-    @OneToMany(() => UserUserType, (userUserType) => userUserType.user)
-    userUserType: UserUserType[]
+    @OneToMany(() => UserProfile, (userProfile) => userProfile.user, {cascade: true})
+    userProfile: UserProfile[]
+    // @OneToMany(() => UserUserType, (userUserType) => userUserType.user, {cascade: true})
+    // userUserType: UserUserType[]
 
     @OneToMany(() => News, (news) => news.creator)
     news: News[]

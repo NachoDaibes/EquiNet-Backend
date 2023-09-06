@@ -1,12 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { ProfileStatus } from "./profileStatus.entity"
-import { UserTypeProfile } from "./userTypeProfile.entity"
 import { ProfileAccess } from "./profileAccess.entity"
+import { ProfileType } from "./profileType.entity"
+import { UserProfile } from "./userProfile.entity"
 
 @Entity({name: 'Profile'})
 export class Profile{
 
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @Column({name: 'name', length: 20})
@@ -15,9 +16,13 @@ export class Profile{
     @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profile)
     profileStatus: ProfileStatus[]
 
-    @OneToMany(() => UserTypeProfile, (userTypeProfile) => userTypeProfile.profile)
-    userTypeProfile: UserTypeProfile[]
-
     @OneToMany(() => ProfileAccess, (profileAccess) => profileAccess.profile)
     profileAccess: ProfileAccess[]
+
+    @ManyToOne(() => ProfileType, (profileType) => profileType.profile)
+    @JoinColumn({name: 'profileType_Id'})
+    profileType: ProfileType
+
+    @OneToMany(() => UserProfile, (userProfile) => userProfile.profile)
+    userProfile: UserProfile[]
 }

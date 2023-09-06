@@ -5,7 +5,7 @@ import { NewsStatus } from "./newsStatus.entity"
 @Entity({name: 'News'})
 export class News{
     
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
     @ManyToOne(() => User, (user) => user.news)

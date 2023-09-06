@@ -5,13 +5,13 @@ import { Type } from "./type.entity"
 @Entity({name: 'TypeConfig'})
 export class TypeConfig{
     
-    @PrimaryGeneratedColumn({name: 'id'})
+    @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
-    @Column({name: 'name', length: 20})
+    @Column({name: 'name', length: 80})
     name: string
 
-    @Column({name: 'code', length: 20})
+    @Column({name: 'code', length: 80})
     code: string
 
     @OneToMany(() => Type, (type) => type.typeConfig)

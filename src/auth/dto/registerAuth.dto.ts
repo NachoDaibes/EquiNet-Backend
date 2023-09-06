@@ -12,4 +12,8 @@ export class RegisterAuthDto extends PartialType(LoginAuthDto) {
     @IsString()
     @IsOptional()
     image: string
+
+    @IsNotEmpty()
+    @IsString()
+    profileType: string
 }

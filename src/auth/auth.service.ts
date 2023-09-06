@@ -6,6 +6,10 @@ import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { TypeService } from 'src/type/type.service';
+import { Profile } from 'src/entities/profile.entity';
+import { UserProfile } from 'src/entities/userProfile.entity';
+import { UserProfileStatus } from 'src/entities/userProfileStatus';
 
 @Injectable()
 export class AuthService {
@@ -13,9 +17,16 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
+    @InjectRepository(UserProfile)
+    private readonly userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(UserProfileStatus)
+    private readonly userProfileStatusRepository: Repository<UserProfileStatus>,
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
-    private jwtAuthService: JwtService
+    private jwtAuthService: JwtService,
+    private typeService: TypeService
   ){}
 
   async registerUser(registerAuthDto: RegisterAuthDto) {
@@ -33,7 +44,33 @@ export class AuthService {
 
     if(user) throw new HttpException('Ya existe un usuario con el email ingresado', 404)
 
-    const u = this.userRepository.create(registerAuthDto)
+    const userProfileStatusTypeActivo = await this.typeService.findTypeByCode('UPSTActivo')
+    const {profileType, ...toCreate} = registerAuthDto
+    
+    let profile
+    if(profileType == 'Miembro'){
+      profile = await this.profileRepository.findOne({where: {name: 'Miembro Activo'}})
+    }
+    if(profileType == 'Propietario'){
+      profile = await this.profileRepository.findOne({where: {name: 'Propietario Activo'}})
+    }
+    if(profileType == 'Administrador'){
+      profile = await this.profileRepository.findOne({where: {name: 'Administrador Activo'}})
+    }
+
+    const u = this.userRepository.create(toCreate)
+
+    const userProfileStatus = this.userProfileStatusRepository.create({
+       userProfileStatusType: userProfileStatusTypeActivo
+    })
+
+    const userProfile = this.userProfileRepository.create({
+      profile: profile,
+      userProfileStatus: [userProfileStatus]
+    })
+
+
+    u.userProfile = [userProfile]
 
     let userFinal
     await this.entityManager.transaction(async (transaction) => {
