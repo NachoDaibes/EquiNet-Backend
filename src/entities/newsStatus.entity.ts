@@ -8,11 +8,11 @@ export class NewsStatus{
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
-    @ManyToOne(() => Type, (type) => type.accessStatus)
+    @ManyToOne(() => Type, (type) => type.newsStatus)
     @JoinColumn({name: 'newsStatusType_Id'})
     newsStatusType: Type
 
-    @ManyToOne(() => Type, (type) => type.accessStatusReason)
+    @ManyToOne(() => Type, (type) => type.newsStatusReason)
     @JoinColumn({name: 'newsStatusReasonType_Id'})
     newsStatusReasonType: Type
 

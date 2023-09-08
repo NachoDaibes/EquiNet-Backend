@@ -10,6 +10,8 @@ import { ProfileTypeStatus } from "./profileTypeStatus.entity"
 import { profile } from "console"
 import { UserProfileStatus } from "./userProfileStatus"
 import { ProfileStatus } from "./profileStatus.entity"
+import { Publication } from "./publication.entity"
+import { PublicationStatus } from "./publicationStatus.entity"
 
 @Entity({name: 'Type'})
 export class Type{
@@ -71,4 +73,13 @@ export class Type{
     
     @OneToMany(() => UserProfileStatus, (userProfileStatus) => userProfileStatus.userProfileStatusReasonType)
     userProfileStatusReason: UserProfileStatus[]
+    
+    @OneToMany(() => Publication, (publication) => publication.publicationType)
+    publication: Publication[]
+    
+    @OneToMany(() => PublicationStatus, (publicationStatus) => publicationStatus.publicationStatusType)
+    publicationStatus: PublicationStatus[]
+    
+    @OneToMany(() => PublicationStatus, (publicationStatusReason) => publicationStatusReason.publicationStatusReasonType)
+    publicationStatusReason: PublicationStatus[]
 }

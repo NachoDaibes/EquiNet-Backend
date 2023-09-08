@@ -31,6 +31,7 @@ import { ProfileType } from './entities/profileType.entity';
 import { UserProfileStatus } from './entities/userProfileStatus';
 import { UserProfile } from './entities/userProfile.entity';
 import { ProfileTypeStatus } from './entities/profileTypeStatus.entity';
+import { PublicationModule } from './publication/publication.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
@@ -69,6 +70,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     UserModule,
     TypeConfigModule,
     TypeModule,
+    PublicationModule,
 
   ],
   controllers: [AppController],
