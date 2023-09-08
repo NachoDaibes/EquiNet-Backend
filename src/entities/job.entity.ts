@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Type } from "./type.entity";
 import { Publication } from "./publication.entity";
 
@@ -14,7 +14,8 @@ export class Job {
     @Column({name: 'requeriments', length: 100})
     requeriments: string
 
-    @Column({name: 'offerType_Id'})
+    @ManyToOne(() => Type, (type) => type.job)
+    @JoinColumn({name: 'offerType_Id'})
     offerType: Type
 
     @Column({name: 'tasks', length: 100})

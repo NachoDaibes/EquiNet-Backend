@@ -6,7 +6,7 @@ import { LegalPerson } from "./legalPerson.entity";
 import { IndividualPerson } from "./individualPerson.entity";
 import { UserProfile } from "./userProfile.entity";
 import { News } from "./news.entity";
-import { PublicationFactory } from "./publication.entity";
+import { Publication } from "./publication.entity";
 
 
 @Entity({name: 'User'})
@@ -56,6 +56,6 @@ export class User{
     @OneToMany(() => News, (news) => news.creator)
     news: News[]
 
-    @OneToMany(() => PublicationFactory, (publicationFactory) => publicationFactory.user)
-    publication: PublicationFactory[]
+    @OneToMany(() => Publication, (publication) => publication.user)
+    publication: Publication[]
 }

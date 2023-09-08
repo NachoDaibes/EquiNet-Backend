@@ -32,6 +32,11 @@ import { UserProfileStatus } from './entities/userProfileStatus';
 import { UserProfile } from './entities/userProfile.entity';
 import { ProfileTypeStatus } from './entities/profileTypeStatus.entity';
 import { PublicationModule } from './publication/publication.module';
+import { Publication } from './entities/publication.entity';
+import { Service } from './entities/service.entity';
+import { Job } from './entities/job.entity';
+import { Donnation } from './entities/donnation.entity';
+import { PublicationStatus } from './entities/publicationStatus.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
@@ -54,7 +59,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       entities: [User, Access,
          AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
-        ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus
+        ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus, 
+        Publication, Service, Job, Donnation, PublicationStatus
       ],
       synchronize: true,
       migrationsRun: true,
