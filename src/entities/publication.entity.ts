@@ -5,6 +5,8 @@ import { Service } from "./service.entity"
 import { Donnation } from "./donnation.entity"
 import { Job } from "./job.entity"
 import { PublicationStatus } from "./publicationStatus.entity"
+import { Location } from "./location.entity"
+import { PublicationDisability } from "./publicationDisability.entity"
 
 @Entity({name: 'Publication'})
 export class Publication{
@@ -27,19 +29,25 @@ export class Publication{
 
     // location: string
 
-    @OneToMany(() => PublicationStatus, (publicationStatus) => publicationStatus.publication)
+    @OneToMany(() => PublicationStatus, (publicationStatus) => publicationStatus.publication, {cascade: true})
     publicationStatus: PublicationStatus[]
 
     @ManyToOne(() => User, (user) => user.publication)
     user: User
     
-    @OneToOne(() => Service, {cascade: true})
+    @OneToOne(() => Service, (service) => service.publication, {cascade: true})
     service: Service
     
-    @OneToOne(() => Donnation, {cascade: true})
-    donattion: Donnation
+    @OneToOne(() => Donnation, (donnation) => donnation.publication, {cascade: true})
+    donnation: Donnation
     
-    @OneToOne(() => Job, {cascade: true})
+    @OneToOne(() => Job, (job) => job.publication, {cascade: true})
     job: Job
 
+    @OneToOne(() => Location, (location) => location.publication)
+    @JoinColumn({name: 'location_Id'})
+    location: Location
+
+    @OneToMany(() => PublicationDisability, (publicationDisability) => publicationDisability.publication)
+    publicationDisability: PublicationDisability[]
 }

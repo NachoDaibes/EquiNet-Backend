@@ -12,10 +12,11 @@ import { UserProfile } from 'src/entities/userProfile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { TypeService } from 'src/type/type.service';
 import { Type } from 'src/entities/type.entity';
+import { UserStatus } from 'src/entities/userStatus.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Type, Profile, UserProfile, UserProfileStatus]),
+    TypeOrmModule.forFeature([User, Type, Profile, UserProfile, UserProfileStatus, UserStatus]),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: {

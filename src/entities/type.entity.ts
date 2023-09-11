@@ -13,6 +13,7 @@ import { ProfileStatus } from "./profileStatus.entity"
 import { Publication } from "./publication.entity"
 import { PublicationStatus } from "./publicationStatus.entity"
 import { Job } from "./job.entity"
+import { DisabilityStatus } from "./disabilityStatus.entity"
 
 @Entity({name: 'Type'})
 export class Type{
@@ -86,4 +87,10 @@ export class Type{
     
     @OneToMany(() => Job, (job) => job.offerType)
     job: Job[]
+
+    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disabilityStatusType)
+    disabilityStatus: DisabilityStatus[]
+
+    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disabilityStatusReasonType)
+    disabilityStatusReason: DisabilityStatus[]
 }

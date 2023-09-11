@@ -21,7 +21,7 @@ export class Job {
     @Column({name: 'tasks', length: 100})
     tasks: string
 
-    @OneToOne(() => Publication)
+    @OneToOne(() => Publication, (publication) => publication.job)
     @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }

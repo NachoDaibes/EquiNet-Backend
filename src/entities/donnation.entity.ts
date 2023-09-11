@@ -17,7 +17,7 @@ export class Donnation {
     @Column({name: 'deadline'})
     deadline: Date
 
-    @OneToOne(() => Publication)
+    @OneToOne(() => Publication, (publication) => publication.donnation)
     @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }

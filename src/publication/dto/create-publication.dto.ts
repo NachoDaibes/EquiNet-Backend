@@ -5,7 +5,7 @@ import { Donnation } from "src/entities/donnation.entity"
 import { Job } from "src/entities/job.entity"
 import { PublicationServiceDto } from "./publicationService.dto"
 import { PublicationJobDto } from "./publicationJob.dto"
-import { PublicationDonnattionDto } from "./publicationDonnattion.dto"
+import { PublicationDonnationDto } from "./publicationDonnattion.dto"
 
 export class CreatePublicationDto {
 
@@ -44,6 +44,6 @@ export class CreatePublicationDto {
 
     @IsOptional()
     @IsObject()
-    @Type(() => PublicationDonnattionDto)
-    donnattion: PublicationDonnattionDto
+    @Type(() => PublicationDonnationDto)
+    donnation: PublicationDonnationDto
 }

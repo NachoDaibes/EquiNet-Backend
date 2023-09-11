@@ -10,6 +10,7 @@ import { TypeService } from 'src/type/type.service';
 import { Profile } from 'src/entities/profile.entity';
 import { UserProfile } from 'src/entities/userProfile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
+import { UserStatus } from 'src/entities/userStatus.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,8 @@ export class AuthService {
     private readonly userProfileRepository: Repository<UserProfile>,
     @InjectRepository(UserProfileStatus)
     private readonly userProfileStatusRepository: Repository<UserProfileStatus>,
+    @InjectRepository(UserStatus)
+    private readonly userStatusRepository: Repository<UserStatus>,
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
     private jwtAuthService: JwtService,
@@ -45,6 +48,7 @@ export class AuthService {
     if(user) throw new HttpException('Ya existe un usuario con el email ingresado', 404)
 
     const userProfileStatusTypeActivo = await this.typeService.findTypeByCode('UPSTActivo')
+    const userStatusActivo = await this.typeService.findTypeByCode('USTActivo')
     const {profileType, ...toCreate} = registerAuthDto
     
     let profile
@@ -69,19 +73,24 @@ export class AuthService {
       userProfileStatus: [userProfileStatus]
     })
 
+    const userStatus = this.userStatusRepository.create({
+      userStatusType: userStatusActivo
+    })
 
+    u.userStatus = [userStatus]
     u.userProfile = [userProfile]
 
     let userFinal
     await this.entityManager.transaction(async (transaction) => {
       try {
+        console.log(transaction)
         userFinal = await transaction.save(u)
       } catch (error) {
         throw new Error(error);
       }
     })
 
-    return user
+    return userFinal
   }
 
   async loginUser(loginAuthDto: LoginAuthDto) {

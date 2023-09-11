@@ -16,7 +16,7 @@ export class Service {
     @Column({name: 'schedule'})
     schedule: string
 
-    @OneToOne(() => Publication)
+    @OneToOne(() => Publication, (publication) => publication.service)
     @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }
