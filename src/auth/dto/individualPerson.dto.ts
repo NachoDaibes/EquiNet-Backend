@@ -1,5 +1,6 @@
 import { Type } from "class-transformer"
 import { IsDateString, IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from "class-validator"
+import { AssignTypeDto } from "src/common/assign-type.helper"
 import { AssignDto } from "src/common/assign.dto"
 
 export class IndividualPersonDto{
@@ -22,9 +23,9 @@ export class IndividualPersonDto{
 
     @IsObject()
     @ValidateNested()
-    @Type(() => AssignDto)
+    @Type(() => AssignTypeDto)
     @IsNotEmpty()
-    identityType: AssignDto
+    identityType: AssignTypeDto
 
     @IsString()
     @IsOptional()

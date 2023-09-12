@@ -31,8 +31,8 @@ export class TypeConfigService {
     return await this.typeConfigRepository.find({})
   }
 
-  async findOne(id: number) {
-    return await this.typeConfigRepository.findOne({where: {id: id}})
+  async findOne(code: string) {
+    return await this.typeConfigRepository.findOne({where: {code: code}})
   }
 
   update(id: number, updateTypeConfigDto: UpdateTypeConfigDto) {

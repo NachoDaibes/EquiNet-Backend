@@ -6,6 +6,7 @@ import { Job } from "src/entities/job.entity"
 import { PublicationServiceDto } from "./publicationService.dto"
 import { PublicationJobDto } from "./publicationJob.dto"
 import { PublicationDonnationDto } from "./publicationDonnattion.dto"
+import { AssignTypeDto } from "src/common/assign-type.helper"
 
 export class CreatePublicationDto {
 
@@ -18,9 +19,9 @@ export class CreatePublicationDto {
 
     @IsObject()
     @ValidateNested()
-    @Type(() => AssignDto)
+    @Type(() => AssignTypeDto)
     @IsNotEmpty()
-    publicationType: AssignDto
+    publicationType: AssignTypeDto
 
     @IsString()
     @IsOptional()

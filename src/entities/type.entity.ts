@@ -1,96 +1,137 @@
-import { IsNumber, IsString } from "class-validator"
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { TypeConfig } from "./typeConfig.entity"
-import { IndividualPerson } from "./individualPerson.entity"
-import { AccessStatus } from "./accessStatus.entity"
-import { News } from "./news.entity"
-import { NewsStatus } from "./newsStatus.entity"
-import { UserStatus } from "./userStatus.entity"
-import { ProfileTypeStatus } from "./profileTypeStatus.entity"
-import { profile } from "console"
-import { UserProfileStatus } from "./userProfileStatus"
-import { ProfileStatus } from "./profileStatus.entity"
-import { Publication } from "./publication.entity"
-import { PublicationStatus } from "./publicationStatus.entity"
-import { Job } from "./job.entity"
-import { DisabilityStatus } from "./disabilityStatus.entity"
+import { IsNumber, IsString } from 'class-validator';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { TypeConfig } from './typeConfig.entity';
+import { IndividualPerson } from './individualPerson.entity';
+import { AccessStatus } from './accessStatus.entity';
+import { News } from './news.entity';
+import { NewsStatus } from './newsStatus.entity';
+import { UserStatus } from './userStatus.entity';
+import { ProfileTypeStatus } from './profileTypeStatus.entity';
+import { profile } from 'console';
+import { UserProfileStatus } from './userProfileStatus';
+import { ProfileStatus } from './profileStatus.entity';
+import { Publication } from './publication.entity';
+import { PublicationStatus } from './publicationStatus.entity';
+import { Job } from './job.entity';
+import { DisabilityStatus } from './disabilityStatus.entity';
 
-@Entity({name: 'Type'})
-export class Type{
+@Entity({ name: 'Type' })
+export class Type {
+  @PrimaryColumn({ name: 'code', length: 80 })
+  code: string;
 
-    @PrimaryGeneratedColumn('increment', {name: 'id'})
-    id: number
+  @Column({ name: 'name', length: 80 })
+  name: string;
 
-    @Column({name: 'name', length: 80})
-    name: string
+  @Column({ name: 'order' })
+  order: number;
 
-    @Column({name: 'code', length: 80})
-    code: string
+  @Column({ name: 'filter', length: 80 })
+  filter: string;
 
-    @Column({name: 'order'})
-    order: number
+  @ManyToOne(() => TypeConfig, (typeConfig) => typeConfig.type)
+  @JoinColumn({ name: 'typeConfig_Id' })
+  typeConfig: TypeConfig;
 
-    @Column({name: 'filter', length: 80})
-    filter: string
+  @OneToMany(
+    () => IndividualPerson,
+    (individualPerson) => individualPerson.identityType,
+  )
+  individualPerson: IndividualPerson[];
 
-    @ManyToOne(() => TypeConfig, (typeConfig) => typeConfig.type)
-    @JoinColumn({name: 'typeConfig_Id'})
-    typeConfig: TypeConfig
+  @OneToMany(() => AccessStatus, (accesStatus) => accesStatus.accessStatusType)
+  accessStatus: AccessStatus[];
 
-    @OneToMany(() => IndividualPerson, (individualPerson) => individualPerson.identityType)
-    individualPerson: IndividualPerson[]
-    
-    @OneToMany(() => AccessStatus, (accesStatus) => accesStatus.accessStatusType)
-    accessStatus: AccessStatus[]
-    
-    @OneToMany(() => AccessStatus, (accesStatus) => accesStatus.accessStatusReasonType)
-    accessStatusReason: AccessStatus[]
-    
-    @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.newsStatusType)
-    newsStatus: NewsStatus[]
-    
-    @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.newsStatusReasonType)
-    newsStatusReason: NewsStatus[]
-    
-    @OneToMany(() => UserStatus, (userStatus) => userStatus.userStatusType)
-    userStatus: UserStatus[]
-    
-    @OneToMany(() => UserStatus, (userStatus) => userStatus.userStatusReasonType)
-    userStatusReason: UserStatus[]
-    
-    @OneToMany(() => ProfileTypeStatus, (profileTypeStatus) => profileTypeStatus.profileTypeStatusType)
-    profileTypeStatus: ProfileTypeStatus[]
-    
-    @OneToMany(() => ProfileTypeStatus, (profileTypeStatus) => profileTypeStatus.profileTypeStatusReasonType)
-    profileTypeStatusReason: ProfileTypeStatus[]
-    
-    @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profileStatusType)
-    profileStatus: ProfileTypeStatus[]
-    
-    @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profileStatusReasonType)
-    profileStatusReason: ProfileTypeStatus[]
-    
-    @OneToMany(() => UserProfileStatus, (userProfileStatus) => userProfileStatus.userProfileStatusType)
-    userProfileStatus: UserProfileStatus[]
-    
-    @OneToMany(() => UserProfileStatus, (userProfileStatus) => userProfileStatus.userProfileStatusReasonType)
-    userProfileStatusReason: UserProfileStatus[]
-    
-    @OneToMany(() => Publication, (publication) => publication.publicationType)
-    publication: Publication[]
-    
-    @OneToMany(() => PublicationStatus, (publicationStatus) => publicationStatus.publicationStatusType)
-    publicationStatus: PublicationStatus[]
-    
-    @OneToMany(() => PublicationStatus, (publicationStatusReason) => publicationStatusReason.publicationStatusReasonType)
-    publicationStatusReason: PublicationStatus[]
-    
-    @OneToMany(() => Job, (job) => job.offerType)
-    job: Job[]
+  @OneToMany(
+    () => AccessStatus,
+    (accesStatus) => accesStatus.accessStatusReasonType,
+  )
+  accessStatusReason: AccessStatus[];
 
-    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disabilityStatusType)
-    disabilityStatus: DisabilityStatus[]
+  @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.newsStatusType)
+  newsStatus: NewsStatus[];
 
-    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disabilityStatusReasonType)
-    disabilityStatusReason: DisabilityStatus[]
+  @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.newsStatusReasonType)
+  newsStatusReason: NewsStatus[];
+
+  @OneToMany(() => UserStatus, (userStatus) => userStatus.userStatusType)
+  userStatus: UserStatus[];
+
+  @OneToMany(() => UserStatus, (userStatus) => userStatus.userStatusReasonType)
+  userStatusReason: UserStatus[];
+
+  @OneToMany(
+    () => ProfileTypeStatus,
+    (profileTypeStatus) => profileTypeStatus.profileTypeStatusType,
+  )
+  profileTypeStatus: ProfileTypeStatus[];
+
+  @OneToMany(
+    () => ProfileTypeStatus,
+    (profileTypeStatus) => profileTypeStatus.profileTypeStatusReasonType,
+  )
+  profileTypeStatusReason: ProfileTypeStatus[];
+
+  @OneToMany(
+    () => ProfileStatus,
+    (profileStatus) => profileStatus.profileStatusType,
+  )
+  profileStatus: ProfileTypeStatus[];
+
+  @OneToMany(
+    () => ProfileStatus,
+    (profileStatus) => profileStatus.profileStatusReasonType,
+  )
+  profileStatusReason: ProfileTypeStatus[];
+
+  @OneToMany(
+    () => UserProfileStatus,
+    (userProfileStatus) => userProfileStatus.userProfileStatusType,
+  )
+  userProfileStatus: UserProfileStatus[];
+
+  @OneToMany(
+    () => UserProfileStatus,
+    (userProfileStatus) => userProfileStatus.userProfileStatusReasonType,
+  )
+  userProfileStatusReason: UserProfileStatus[];
+
+  @OneToMany(() => Publication, (publication) => publication.publicationType)
+  publication: Publication[];
+
+  @OneToMany(
+    () => PublicationStatus,
+    (publicationStatus) => publicationStatus.publicationStatusType,
+  )
+  publicationStatus: PublicationStatus[];
+
+  @OneToMany(
+    () => PublicationStatus,
+    (publicationStatusReason) =>
+      publicationStatusReason.publicationStatusReasonType,
+  )
+  publicationStatusReason: PublicationStatus[];
+
+  @OneToMany(() => Job, (job) => job.offerType)
+  job: Job[];
+
+  @OneToMany(
+    () => DisabilityStatus,
+    (disabilityStatus) => disabilityStatus.disabilityStatusType,
+  )
+  disabilityStatus: DisabilityStatus[];
+
+  @OneToMany(
+    () => DisabilityStatus,
+    (disabilityStatus) => disabilityStatus.disabilityStatusReasonType,
+  )
+  disabilityStatusReason: DisabilityStatus[];
 }

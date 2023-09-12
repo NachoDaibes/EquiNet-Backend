@@ -17,9 +17,9 @@ export class TypeConfigController {
     return this.typeConfigService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.typeConfigService.findOne(+id);
+  @Get(':code')
+  findOne(@Param('code') code: string) {
+    return this.typeConfigService.findOne(code);
   }
 
   @Patch(':id')

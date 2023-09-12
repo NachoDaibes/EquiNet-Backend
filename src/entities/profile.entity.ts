@@ -6,11 +6,10 @@ import { UserProfile } from "./userProfile.entity"
 
 @Entity({name: 'Profile'})
 export class Profile{
-
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
-    @Column({name: 'name', length: 20})
+    @Column({name: 'name', length: 80})
     name: string
 
     @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profile)

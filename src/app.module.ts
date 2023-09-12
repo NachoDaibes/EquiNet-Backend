@@ -37,6 +37,12 @@ import { Service } from './entities/service.entity';
 import { Job } from './entities/job.entity';
 import { Donnation } from './entities/donnation.entity';
 import { PublicationStatus } from './entities/publicationStatus.entity';
+import { Location } from './entities/location.entity';
+import { Department } from './entities/department.entity';
+import { PoliticalDivision } from './entities/politicalDivision.entity';
+import { PublicationDisability } from './entities/publicationDisability.entity';
+import { Disability } from './entities/disability.entity';
+import { DisabilityStatus } from './entities/disabilityStatus.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 
@@ -54,13 +60,14 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       host: '127.0.0.1',
       port: 1433,
       username: 'sa',
-      password: 'Kalijose-25',
+      password: 'r00t.R00T',
       database: 'EquiNetDev',
       entities: [User, Access,
          AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
         ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus, 
-        Publication, Service, Job, Donnation, PublicationStatus
+        Publication, Service, Job, Donnation, PublicationStatus, Location, Department,
+        PoliticalDivision, PublicationDisability, Disability, DisabilityStatus
       ],
       synchronize: true,
       migrationsRun: true,
