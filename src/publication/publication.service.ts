@@ -65,7 +65,8 @@ export class PublicationService {
     const publicationStatusActivo = await this.typeService.findTypeByCode('PSTActivo')
 
     const publication = await this.publicationRepository.findOne({
-      relations: ['publicationType', 'user', 'service', 'donnation', 'job'],
+      relations: ['publicationType', 'user', 'service', 'donnation', 'job', 'location',
+       'location.department', 'location.department.politicalDivision'],
       where: {
         id: id,
         publicationStatus: {
