@@ -49,11 +49,30 @@ export class PublicationService {
 
     const publications = await this.publicationRepository.find({
       relations: ['publicationStatus', 'publicationStatus.publicationStatusType', 'publicationStatus.publicationStatusReasonType', 
-      'donnation', 'job', 'job.offerType', 'service'],
+      'donnation', 'job', 'job.offerType', 'service', 'publicationType'],
       where: {
         publicationStatus: {
           publicationStatusType: publicationStatusActivo
         }
+      }
+    })
+  
+    return publications
+  }
+
+  async findAllByUser(id: number) {
+    const publicationStatusActivo = await this.typeService.findTypeByCode('PSTActivo')
+
+    const publications = await this.publicationRepository.find({
+      relations: ['publicationStatus', 'publicationStatus.publicationStatusType', 'publicationStatus.publicationStatusReasonType', 
+      'donnation', 'job', 'job.offerType', 'service', 'publicationType', 'user'],
+      where: {
+        publicationStatus: {
+          publicationStatusType: publicationStatusActivo
+        },
+        // user: {
+        //   id: id
+        // }
       }
     })
   

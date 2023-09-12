@@ -44,7 +44,7 @@ export class Publication{
     @OneToOne(() => Job, (job) => job.publication, {cascade: true})
     job: Job
 
-    @OneToOne(() => Location, (location) => location.publication)
+    @ManyToOne(() => Location, (location) => location.publication)
     @JoinColumn({name: 'location_Id'})
     location: Location
 

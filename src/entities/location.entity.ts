@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Department } from "./department.entity"
 import { Publication } from "./publication.entity"
 
@@ -15,6 +15,6 @@ export class Location{
     @JoinColumn({name: 'department_Id'})
     department: Department
 
-    @OneToOne(() => Publication, (publication) => publication.location)
-    publication: Publication
+    @OneToMany(() => Publication, (publication) => publication.location)
+    publication: Publication[]
 }

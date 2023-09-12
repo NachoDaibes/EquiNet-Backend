@@ -17,6 +17,11 @@ export class PublicationController {
     return this.publicationService.findAll();
   }
 
+  @Get('by-user/:id')
+  findAllByUser(@Param('id') id: string) {
+    return this.publicationService.findAllByUser(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.publicationService.findOne(+id);

@@ -98,6 +98,7 @@ export class AuthService {
     const {email, password} = loginAuthDto
 
     const user = await this.userRepository.findOne({
+      relations: ['userProfile', 'userProfile.profile', 'userProfile.profile.profileType', ],
       where: {
         email: email
       }

@@ -63,8 +63,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       host: '127.0.0.1',
       port: 1433,
       username: 'sa',
-      // password: 'r00t.R00T',
-      password: 'Kalijose-25',
+      password: 'r00t.R00T',
+      // password: 'Kalijose-25',
       database: 'EquiNetDev',
       entities: [
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
