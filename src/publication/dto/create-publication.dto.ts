@@ -24,7 +24,7 @@ export class CreatePublicationDto {
     publicationType: AssignTypeDto
 
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     image: string
 
     @IsObject()

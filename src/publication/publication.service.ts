@@ -60,8 +60,21 @@ export class PublicationService {
     return publications
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} publication`;
+  async findOne(id: number) {
+
+    const publicationStatusActivo = await this.typeService.findTypeByCode('PSTActivo')
+
+    const publication = await this.publicationRepository.findOne({
+      relations: ['publicationType', 'user', 'service', 'donnation', 'job'],
+      where: {
+        id: id,
+        publicationStatus: {
+          publicationStatusType: publicationStatusActivo
+        }
+      }
+    })
+
+    return publication
   }
 
   update(id: number, updatePublicationDto: UpdatePublicationDto) {

@@ -1,4 +1,4 @@
-import { IsString } from "class-validator"
+import { IsNotEmpty, IsString } from "class-validator"
 
 export class PublicationServiceDto{
 
@@ -6,6 +6,7 @@ export class PublicationServiceDto{
     address: string
 
     @IsString()
+    @IsNotEmpty()
     linkGoogleMaps: string
 
     @IsString()
