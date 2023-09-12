@@ -7,17 +7,17 @@ import { Type } from 'src/entities/type.entity';
 
 @Injectable()
 export class TypeService {
-
   constructor(
     @InjectRepository(Type)
     private readonly typeRepository: Repository<Type>,
-  ){}
+  ) {}
 
-
-  async findTypeByCode(code: string){
-    return await this.typeRepository.findOne({where: {
-      code: code
-    }})
+  async findTypeByCode(code: string) {
+    return await this.typeRepository.findOne({
+      where: {
+        code: code,
+      },
+    });
   }
   create(createTypeDto: CreateTypeDto) {
     return 'This action adds a new type';
@@ -25,6 +25,16 @@ export class TypeService {
 
   findAll() {
     return `This action returns all type`;
+  }
+
+  async findAllByTypeConfig(code: string) {
+    return await this.typeRepository.find({
+      where: {
+        typeConfig: {
+          code: code,
+        },
+      },
+    });
   }
 
   findOne(id: number) {

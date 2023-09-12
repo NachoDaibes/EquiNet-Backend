@@ -7,41 +7,48 @@ import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class PoliticalDivisionService {
-
   constructor(
     @InjectRepository(PoliticalDivision)
     private readonly politicalDivisionRepository: Repository<PoliticalDivision>,
-    private readonly entityManager: EntityManager
-  ){}
-  
+    private readonly entityManager: EntityManager,
+  ) {}
+
   async create(createPoliticalDivisionDto: CreatePoliticalDivisionDto) {
+    const politicalDivisionExist =
+      await this.politicalDivisionRepository.findOne({
+        where: {
+          name: createPoliticalDivisionDto.name,
+        },
+      });
 
-    const politicalDivisionExist = await this.politicalDivisionRepository.findOne({where: {
-      name: createPoliticalDivisionDto.name
-    }})
-
-    if (politicalDivisionExist){
-      return new BadRequestException('Ya existe una provincia con el nombre ingresado')
+    if (politicalDivisionExist) {
+      return new BadRequestException(
+        'Ya existe una provincia con el nombre ingresado',
+      );
     }
 
     const politicalDivision = this.politicalDivisionRepository.create({
-      name: createPoliticalDivisionDto.name
-    })
-    let politicalDivisionFinal
+      name: createPoliticalDivisionDto.name,
+    });
+    let politicalDivisionFinal;
 
     await this.entityManager.transaction(async (transaction) => {
       try {
-        politicalDivisionFinal = await transaction.save(politicalDivision)
+        politicalDivisionFinal = await transaction.save(politicalDivision);
       } catch (error) {
         throw new Error(error);
       }
-    })
+    });
 
-    return politicalDivisionFinal
+    return politicalDivisionFinal;
   }
 
-  findAll() {
-    return `This action returns all politicalDivision`;
+  async findAll() {
+    const politicalDivisions = await this.politicalDivisionRepository
+      .createQueryBuilder('PoliticalDivision')
+      .select(['PoliticalDivision.id', 'PoliticalDivision.name'])
+      .getMany();
+    return politicalDivisions
   }
 
   findOne(id: number) {

@@ -7,41 +7,45 @@ import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class DepartmentService {
-
   constructor(
     @InjectRepository(Department)
     private readonly departmentRepository: Repository<Department>,
-    private readonly entityManager: EntityManager
-  ){
-
-  }
+    private readonly entityManager: EntityManager,
+  ) {}
 
   async create(createDepartmentDto: CreateDepartmentDto) {
-    
-    const departmentExist = await this.departmentRepository.findOne({where: {
-      name: createDepartmentDto.name
-    }})
+    const departmentExist = await this.departmentRepository.findOne({
+      where: {
+        name: createDepartmentDto.name,
+      },
+    });
 
-    if (departmentExist){
-      return new BadRequestException('Ya existe una provincia con el nombre ingresado')
+    if (departmentExist) {
+      return new BadRequestException(
+        'Ya existe una provincia con el nombre ingresado',
+      );
     }
 
-    const department = this.departmentRepository.create(createDepartmentDto)
-    let departmentFinal
+    const department = this.departmentRepository.create(createDepartmentDto);
+    let departmentFinal;
 
     await this.entityManager.transaction(async (transaction) => {
       try {
-        departmentFinal = await transaction.save(department)
+        departmentFinal = await transaction.save(department);
       } catch (error) {
         throw new Error(error);
       }
-    })
+    });
 
-    return departmentFinal
+    return departmentFinal;
   }
 
-  findAll() {
-    return `This action returns all department`;
+  async findAll() {
+    const departments = await this.departmentRepository
+      .createQueryBuilder('Department')
+      .select(['Department.id', 'Department.name'])
+      .getMany();
+    return departments;
   }
 
   findOne(id: number) {

@@ -20,7 +20,7 @@ async function bootstrap() {
     .addBearerAuth(undefined, 'defaultBearerAuth')
     .addSecurityRequirements('defaultBearerAuth')
     .build();
-    
+    app.enableCors()
     const document = SwaggerModule.createDocument(app, config);
     
     SwaggerModule.setup('api-docs', app, document, {
