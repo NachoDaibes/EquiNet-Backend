@@ -19,15 +19,10 @@ export class UserService {
     return 'This create'
   }
 
-  // async findAll() {
-  //   const users = await this.userRepository
-  //   .createQueryBuilder('User')
-  //   .select('User.id')
-  //   .getMany()
-
-  //   const user2 = await this.userRepository.find({})
-  //   return user2
-  // }
+  async findAll() {
+    const users = await this.userRepository.find({})
+    return users
+  }
 
   async findOne(id: number) {
 

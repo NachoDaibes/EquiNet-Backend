@@ -29,7 +29,7 @@ export class AuthService {
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
     private jwtAuthService: JwtService,
-    private typeService: TypeService
+    private typeService: TypeService,
   ){}
 
   async registerUser(registerAuthDto: RegisterAuthDto) {
@@ -110,9 +110,15 @@ export class AuthService {
 
     if(!checkPassword) throw new HttpException('Incorrect Password', 403)
   
+    let profiles = []
+    for (const userProfile of user.userProfile) {
+      profiles.push(userProfile.profile.name)
+    }
+
     const payload = {
       id: user.id,
-      username: user.username
+      username: user.username,
+      profiles: profiles
     }
     const token = await this.jwtAuthService.sign(payload)
 
@@ -122,6 +128,13 @@ export class AuthService {
     }
 
     return data
-
   }
+
+  validateAccess(token: string){
+    const tokenFinal = token.slice(7)
+    const decodedToken: any = this.jwtAuthService.decode(tokenFinal)
+    const profiles = decodedToken.profiles
+
+    return profiles
+}
 }
