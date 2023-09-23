@@ -1,7 +1,6 @@
 import { Type } from "class-transformer"
 import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from "class-validator"
 import { AssignDto } from "src/common/assign.dto"
-import { Donnation } from "src/entities/donnation.entity"
 import { Job } from "src/entities/job.entity"
 import { PublicationServiceDto } from "./publicationService.dto"
 import { PublicationJobDto } from "./publicationJob.dto"
@@ -46,5 +45,5 @@ export class CreatePublicationDto {
     @IsOptional()
     @IsObject()
     @Type(() => PublicationDonnationDto)
-    donnation: PublicationDonnationDto
+    donation: PublicationDonnationDto
 }

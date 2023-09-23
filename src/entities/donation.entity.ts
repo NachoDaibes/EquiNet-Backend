@@ -2,8 +2,8 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "ty
 import { Type } from "./type.entity";
 import { Publication } from "./publication.entity";
 
-@Entity({name: 'Donnation'})
-export class Donnation {
+@Entity({name: 'Donation'})
+export class Donation {
     
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
@@ -17,7 +17,7 @@ export class Donnation {
     @Column({name: 'deadline'})
     deadline: Date
 
-    @OneToOne(() => Publication, (publication) => publication.donnation)
+    @OneToOne(() => Publication, (publication) => publication.donation)
     @JoinColumn({name: 'publication_Id'})
     publication: Publication
 }

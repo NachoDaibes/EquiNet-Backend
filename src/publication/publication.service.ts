@@ -46,17 +46,16 @@ export class PublicationService {
 
   async findAll() {
     const publicationStatusActivo = await this.typeService.findTypeByCode('PSTActivo')
-
     const publications = await this.publicationRepository.find({
       relations: ['publicationStatus', 'publicationStatus.publicationStatusType', 'publicationStatus.publicationStatusReasonType', 
-      'donnation', 'job', 'job.offerType', 'service', 'publicationType'],
+      'donation', 'job', 'job.offerType', 'service', 'publicationType'],
       where: {
         publicationStatus: {
           publicationStatusType: publicationStatusActivo
         }
       }
     })
-  
+    if(publications.length === 0) throw new Error("No hay publicaciones.");
     return publications
   }
 
@@ -65,7 +64,7 @@ export class PublicationService {
 
     const publications = await this.publicationRepository.find({
       relations: ['publicationStatus', 'publicationStatus.publicationStatusType', 'publicationStatus.publicationStatusReasonType', 
-      'donnation', 'job', 'job.offerType', 'service', 'publicationType', 'user'],
+      'donation', 'job', 'job.offerType', 'service', 'publicationType', 'user'],
       where: {
         publicationStatus: {
           publicationStatusType: publicationStatusActivo
@@ -84,7 +83,7 @@ export class PublicationService {
     const publicationStatusActivo = await this.typeService.findTypeByCode('PSTActivo')
 
     const publication = await this.publicationRepository.findOne({
-      relations: ['publicationType', 'user', 'user.individualPerson', 'user.legalPerson', 'service', 'donnation', 'job', 'location',
+      relations: ['publicationType', 'user', 'user.individualPerson', 'user.legalPerson', 'service', 'donation', 'job', 'location',
        'location.department', 'location.department.politicalDivision'],
       where: {
         id: id,

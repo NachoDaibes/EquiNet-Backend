@@ -18,15 +18,22 @@ export class DisabilityService {
   }
 
   async findAll() {
-    const type = await this.typeService.findTypeByCode('DSActivo')
-    const disabilities = await this.disabilityRepository
-      .createQueryBuilder('Disability')
-      .select(['Disability.id', 'Disability.name'])
-      .leftJoin('Disability.disabilityStatus', 'DisabilityStatus')
-      .leftJoin('DisabilityStatus.disabilityStatusType', 'DisabilityStatusType')
-      .where('DisabilityStatusType.code = :code', { code: type.code })
-      .getMany();
-    return disabilities;
+    const type = await this.typeService.findTypeByCode('DSActivo');
+    if (type) {
+      const disabilities = await this.disabilityRepository
+        .createQueryBuilder('Disability')
+        .select(['Disability.id', 'Disability.name'])
+        .leftJoin('Disability.disabilityStatus', 'DisabilityStatus')
+        .leftJoin(
+          'DisabilityStatus.disabilityStatusType',
+          'DisabilityStatusType',
+        )
+        .where('DisabilityStatusType.code = :code', { code: type.code })
+        .getMany();
+      return disabilities;
+    } else {
+      throw new Error('No se entontro el type.');
+    }
   }
 
   findOne(id: number) {
