@@ -48,6 +48,6 @@ export class Publication{
     @JoinColumn({name: 'location_Id'})
     location: Location
 
-    @OneToMany(() => PublicationDisability, (publicationDisability) => publicationDisability.publication)
+    @OneToMany(() => PublicationDisability, (publicationDisability) => publicationDisability.publication, {cascade: true})
     publicationDisability: PublicationDisability[]
 }

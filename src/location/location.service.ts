@@ -18,7 +18,13 @@ export class LocationService {
   async findAll() {
     const locations = await this.locationRepository
       .createQueryBuilder('Location')
-      .select(['Location.id', 'Location.name'])
+      .select([
+        'Location.id',
+        'Location.name',
+        'Department.id',
+        'Department.name',
+      ])
+      .leftJoin('Location.department', 'Department')
       .getMany();
     return locations;
   }
