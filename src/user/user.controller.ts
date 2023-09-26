@@ -48,7 +48,7 @@ export class UserController {
     }
   }
 
-  @Patch('')
+  @Patch()
   update(@Body() updateUserDto: UpdateUserDto, @Headers('authorization') token: string) {
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
