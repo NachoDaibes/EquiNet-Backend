@@ -43,7 +43,13 @@ export class DepartmentService {
   async findAll() {
     const departments = await this.departmentRepository
       .createQueryBuilder('Department')
-      .select(['Department.id', 'Department.name'])
+      .select([
+        'Department.id',
+        'Department.name',
+        'PoliticaDivision.id',
+        'PoliticaDivision.name',
+      ])
+      .leftJoin('Department.politicalDivision', 'PoliticaDivision')
       .getMany();
     return departments;
   }
