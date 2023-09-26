@@ -26,7 +26,6 @@ export class UserController {
     }
     const profiles: any[] = this.authService.validateAccess(token)
   
-
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
       return this.userService.findAll();
     }else{
