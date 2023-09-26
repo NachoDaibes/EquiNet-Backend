@@ -1,11 +1,15 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IndividualPersonDto } from 'src/auth/dto/individualPerson.dto';
 import { LegalPersonDto } from 'src/auth/dto/legalPerson.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
+
+    @IsNumber()
+    @IsNotEmpty()
+    id: number
 
     @IsString()
     @IsOptional()
@@ -15,9 +19,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsOptional()
     image: string
 
-    @IsOptional()
-    @IsString()
-    profileType: string
+    // @IsOptional()
+    // @IsString()
+    // profileType: string
 
     @IsOptional()
     @IsObject()

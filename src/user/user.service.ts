@@ -5,12 +5,21 @@ import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { TypeService } from 'src/type/type.service';
+import { UserProfile } from 'src/entities/userProfile.entity';
+import { Profile } from 'src/entities/profile.entity';
+import { UserProfileStatus } from 'src/entities/userProfileStatus';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
+    @InjectRepository(UserProfile)
+    private readonly userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(UserProfileStatus)
+    private readonly userProfileStatusRepository: Repository<UserProfileStatus>,
     private readonly entityManager: EntityManager,
     private readonly typeService: TypeService
   ){}
@@ -39,15 +48,41 @@ export class UserService {
     })
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(updateUserDto: UpdateUserDto) {
     
-    const user = await this.userRepository.findOne({where: {id: id}})
-
+    const user = await this.userRepository.findOne({where: {id: updateUserDto.id}})
+    
     if(!user){
-      return new BadRequestException('No existe un usuario con el id: ' + id)
+      return new BadRequestException('No existe un usuario con el id: ' + updateUserDto.id)
     }
     
-    const usertoUpdate = this.userRepository.update(id, updateUserDto)
+    // const userProfileStatusTypeActivo = await this.typeService.findTypeByCode('UPSTActivo')
+  //   const {profileType, ...toUpdate} = updateUserDto
+  //   let profile
+  //   if(profileType == 'Miembro'){
+  //     profile = await this.profileRepository.findOne({where: {name: 'Miembro Activo'}})
+  //   }
+  //   if(profileType == 'Propietario'){
+  //     profile = await this.profileRepository.findOne({where: {name: 'Propietario Activo'}})
+  //   }
+  //   if(profileType == 'Administrador'){
+  //     profile = await this.profileRepository.findOne({where: {name: 'Administrador Activo'}})
+  //   }
+
+  //   const usertoUpdate = this.userRepository.preload(id, ...updateUserDto)
+
+  //   const userProfileStatus = this.userProfileStatusRepository.create({
+  //     userProfileStatusType: userProfileStatusTypeActivo
+  //  })
+
+  //   const userProfile = this.userProfileRepository.create({
+  //     profile: profile,
+  //     userProfileStatus: [userProfileStatus]
+  //   })
+
+  //   usertoUpdate.
+
+    const usertoUpdate = await this.userRepository.preload({id: updateUserDto.id, ...updateUserDto})
 
     let userFinal
     await this.entityManager.transaction(async (transaction) => {

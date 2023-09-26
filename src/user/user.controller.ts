@@ -6,7 +6,6 @@ import { JwtAuthGuard } from 'src/auth/jwtAuthGuard';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -34,7 +33,8 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Headers('authorization') token: string) {
+  findOne(@Param('id') id: string, 
+  @Headers('authorization') token: string) {
 
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
@@ -48,9 +48,18 @@ export class UserController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('')
+  update(@Body() updateUserDto: UpdateUserDto, @Headers('authorization') token: string) {
+    if(!token) {
+      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
+    }
+    const profiles: any[] = this.authService.validateAccess(token)
+
+    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
+      return this.userService.update(updateUserDto);
+    }else{
+      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
+    }
   }
 
   @Delete(':id')
