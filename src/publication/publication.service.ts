@@ -96,9 +96,9 @@ export class PublicationService {
         publicationStatus: {
           publicationStatusType: publicationStatusActivo,
         },
-        // user: {
-        //   id: id
-        // }
+        user: {
+          id: id
+        }
       },
     });
 

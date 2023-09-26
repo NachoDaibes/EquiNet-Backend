@@ -6,7 +6,6 @@ import { JwtAuthGuard } from 'src/auth/jwtAuthGuard';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('publication')
-@UseGuards(JwtAuthGuard)
 export class PublicationController {
   constructor(
     private readonly publicationService: PublicationService,
@@ -28,17 +27,8 @@ export class PublicationController {
   }
 
   @Get()
-  findAll(@Headers('authorization') token: string) {
-    if(!token) {
-      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
-    }
-    const profiles: any[] = this.authService.validateAccess(token)
-  
-    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.publicationService.findAll();
-    }else{
-      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
-    }
+  findAll() {
+    return this.publicationService.findAll();
   }
 
   @Get('by-user/:id')
@@ -56,17 +46,8 @@ export class PublicationController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Headers('authorization') token: string) {
-    if(!token) {
-      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
-    }
-    const profiles: any[] = this.authService.validateAccess(token)
-  
-    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.publicationService.findOne(+id);
-    }else{
-      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
-    }
+  findOne(@Param('id') id: string) {
+    return this.publicationService.findOne(+id);
   }
 
   @Patch(':id')
