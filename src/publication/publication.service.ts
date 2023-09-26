@@ -89,6 +89,8 @@ export class PublicationService {
         'service',
         'publicationType',
         'user',
+        'publicationDisability',
+        'publicationDisability.disability',
       ],
       where: {
         publicationStatus: {
@@ -120,6 +122,8 @@ export class PublicationService {
         'location',
         'location.department',
         'location.department.politicalDivision',
+        'publicationDisability',
+        'publicationDisability.disability',
       ],
       where: {
         id: id,
