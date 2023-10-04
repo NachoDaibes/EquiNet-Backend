@@ -7,6 +7,7 @@ import { PublicationStatus } from "./publicationStatus.entity"
 import { Location } from "./location.entity"
 import { PublicationDisability } from "./publicationDisability.entity"
 import { Donation } from "./donation.entity"
+import { Image } from "./image.entity"
 
 @Entity({name: 'Publication'})
 export class Publication{
@@ -23,11 +24,6 @@ export class Publication{
     @ManyToOne(() => Type, (type) => type.publication)
     @JoinColumn({name: 'publicationType_ Id'})
     publicationType: Type
-
-    @Column({name: 'image'})
-    image: string
-
-    // location: string
 
     @OneToMany(() => PublicationStatus, (publicationStatus) => publicationStatus.publication, {cascade: true})
     publicationStatus: PublicationStatus[]
@@ -50,4 +46,7 @@ export class Publication{
 
     @OneToMany(() => PublicationDisability, (publicationDisability) => publicationDisability.publication, {cascade: true})
     publicationDisability: PublicationDisability[]
+
+    @OneToMany(() => Image, (image) => image.publication, {cascade: true})
+    images: Image[]
 }

@@ -73,11 +73,29 @@ export class PublicationService {
     return publications;
   }
 
-  async findAllByUser(id: number) {
-    const publicationStatusActivo = await this.typeService.findTypeByCode(
-      'PSTActivo',
-    );
+  async findAllByAdmin() {
+    const publications = await this.publicationRepository.find({
+      relations: [
+        'publicationStatus',
+        'publicationStatus.publicationStatusType',
+        'publicationStatus.publicationStatusReasonType',
+        'donation',
+        'job',
+        'job.offerType',
+        'service',
+        'publicationType',
+        'location',
+        'location.department',
+        'location.department.politicalDivision',
+        'publicationDisability',
+        'publicationDisability.disability',
+      ],
+    });
+    if (publications.length === 0) throw new Error('No hay publicaciones.');
+    return publications;
+  }
 
+  async findAllByUser(id: number) {
     const publications = await this.publicationRepository.find({
       relations: [
         'publicationStatus',
@@ -93,12 +111,9 @@ export class PublicationService {
         'publicationDisability.disability',
       ],
       where: {
-        publicationStatus: {
-          publicationStatusType: publicationStatusActivo,
-        },
         user: {
-          id: id
-        }
+          id: id,
+        },
       },
     });
 
@@ -124,6 +139,7 @@ export class PublicationService {
         'location.department.politicalDivision',
         'publicationDisability',
         'publicationDisability.disability',
+        'images',
       ],
       where: {
         id: id,
@@ -142,6 +158,19 @@ export class PublicationService {
 
   async remove(id: number) {
     const publication = await this.publicationRepository.findOne({
+      relations: [
+        'publicationStatus',
+        'publicationStatus.publicationStatusType',
+        'publicationStatus.publicationStatusReasonType',
+        'donation',
+        'job',
+        'job.offerType',
+        'service',
+        'publicationType',
+        'user',
+        'publicationDisability',
+        'publicationDisability.disability',
+      ],
       where: { id },
     });
 
@@ -157,7 +186,7 @@ export class PublicationService {
       publicationStatusType: publicationStatusInactivo,
     });
 
-    publication.publicationStatus = [publicationStatus];
+    publication.publicationStatus.push(publicationStatus);
 
     let publicationFinal;
     await this.entityManager.transaction(async (transaction) => {

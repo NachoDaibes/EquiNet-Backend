@@ -31,6 +31,20 @@ export class PublicationController {
     return this.publicationService.findAll();
   }
 
+  @Get('admin')
+  findAllAdmin(@Headers('authorization') token: string) {
+    if(!token) {
+      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
+    }
+    const profiles: any[] = this.authService.validateAccess(token)
+  
+    if(profiles.includes('Administrador Activo')){
+      return this.publicationService.findAllByAdmin();
+    }else{
+      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
+    }
+  }
+
   @Get('by-user/:id')
   findAllByUser(@Param('id') id: string, @Headers('authorization') token: string) {
     if(!token) {
@@ -38,7 +52,7 @@ export class PublicationController {
     }
     const profiles: any[] = this.authService.validateAccess(token)
   
-    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
+    if(profiles.includes('Propietario Activo')){
       return this.publicationService.findAllByUser(+id);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)

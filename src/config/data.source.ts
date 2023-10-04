@@ -16,6 +16,7 @@ import { ProfileTypeStatus } from "src/entities/profileTypeStatus.entity";
 import { ProfileType } from "src/entities/profileType.entity";
 import { UserProfileStatus } from "src/entities/userProfileStatus";
 import { UserProfile } from "src/entities/userProfile.entity";
+import { Image } from "src/entities/image.entity";
 
 const dest= "dist/common/envs/";
 const env: string | undefined = process.env.NODE_ENV;
@@ -42,7 +43,7 @@ console.log("DATABASE_HOST:"+process.env.DATABASE_HOST)
     entities:[User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile, 
       ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, 
       , UserProfile, ProfileTypeStatus, ProfileType, UserProfileStatus, ProfileType, 
-      ProfileTypeStatus],
+      ProfileTypeStatus, Image],
     migrations: [dist+"/migrations/*{.ts,.js}"],
     migrationsRun:false,
       synchronize:false,

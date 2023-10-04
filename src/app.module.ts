@@ -47,6 +47,7 @@ import { LocationModule } from './location/location.module';
 import { DepartmentModule } from './department/department.module';
 import { PoliticalDivisionModule } from './political-division/political-division.module';
 import { DisabilityModule } from './disability/disability.module';
+import { Image } from './entities/image.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -71,7 +72,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
         ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus, 
         Publication, Service, Job, Donation, PublicationStatus, Location, Department,
-        PoliticalDivision, PublicationDisability, Disability, DisabilityStatus
+        PoliticalDivision, PublicationDisability, Disability, DisabilityStatus, Image
       ],
       synchronize: true,
       migrationsRun: true,
