@@ -47,6 +47,7 @@ import { LocationModule } from './location/location.module';
 import { DepartmentModule } from './department/department.module';
 import { PoliticalDivisionModule } from './political-division/political-division.module';
 import { DisabilityModule } from './disability/disability.module';
+import { NewsModule } from './news/news.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -92,6 +93,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     DepartmentModule,
     PoliticalDivisionModule,
     DisabilityModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService,

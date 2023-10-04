@@ -12,25 +12,22 @@ export class News{
     @JoinColumn({name: 'user_Id'})
     creator: User
 
-    @Column({name: 'title', length: 20})
+    @Column({name: 'title', length: 150})
     title: string
 
-    @Column({name: 'description', length: 100})
+    @Column({name: 'description', length: 3000})
     description: string
 
     @Column({name: 'url', length: 2000})
     url: string
 
-    @Column({name: 'source', length: 20})
+    @Column({name: 'source', length: 80})
     source: string
 
-    @Column({name: 'createdAt', type: 'datetime'})
-    createdAt: Date
-
-    @Column({name: 'image', length: 256})
+    @Column({name: 'image', length: 1000})
     image: string
 
-    @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.news)
-    newsStatus: NewsStatus
+    @OneToMany(() => NewsStatus, (newsStatus) => newsStatus.news, {cascade: true})
+    newsStatus: NewsStatus[]
 
 }

@@ -7,6 +7,11 @@ import { IndividualPerson } from "./individualPerson.entity";
 import { UserProfile } from "./userProfile.entity";
 import { News } from "./news.entity";
 import { Publication } from "./publication.entity";
+import { Discussion } from "./discussion.entity";
+import { Report } from "./report.entity";
+import { Bookmark } from "./bookmark.entity";
+import { DiscussionLikes } from "./discussionLikes.entity";
+import { Reply } from "./reply.entity";
 
 
 @Entity({name: 'User'})
@@ -58,4 +63,19 @@ export class User{
 
     @OneToMany(() => Publication, (publication) => publication.user)
     publication: Publication[]
+
+    @OneToMany(()=> Discussion, (discussion) => discussion.author)
+    discussion: Discussion[]
+
+    @OneToMany(() => Report, (report) => report.user)
+    report: Report[]
+
+    @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+    bookmark: Bookmark[]
+
+    @OneToMany(() => DiscussionLikes, (discussionLikes) => discussionLikes.user)
+    discussionLikes: DiscussionLikes[]
+
+    @OneToMany(() => Reply, (reply) => reply.author)
+    reply: Reply[]
 }
