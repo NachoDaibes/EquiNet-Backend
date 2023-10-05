@@ -12,6 +12,7 @@ import { Report } from "./report.entity";
 import { Bookmark } from "./bookmark.entity";
 import { DiscussionLikes } from "./discussionLikes.entity";
 import { Reply } from "./reply.entity";
+import { ReplyLikes } from "./replyLikes.entity";
 
 
 @Entity({name: 'User'})
@@ -78,4 +79,7 @@ export class User{
 
     @OneToMany(() => Reply, (reply) => reply.author)
     reply: Reply[]
+    
+    @OneToMany(() => ReplyLikes, (replyLikes) => replyLikes.user)
+    replyLikes: ReplyLikes[]
 }

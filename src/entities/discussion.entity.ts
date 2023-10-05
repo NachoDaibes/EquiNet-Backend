@@ -7,7 +7,7 @@ import { Bookmark } from "./bookmark.entity"
 import { DiscussionLikes } from "./discussionLikes.entity"
 import { Reply } from "./reply.entity"
 
-Entity({name: 'Discussion'})
+@Entity({name: 'Discussion'})
 export class Discussion{
 
     @PrimaryGeneratedColumn('increment', {name: 'id'})

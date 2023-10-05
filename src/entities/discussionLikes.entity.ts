@@ -2,7 +2,7 @@ import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Discussion } from "./discussion.entity"
 import { User } from "./user.entity"
 
-Entity({name: 'DiscussionLikes'})
+@Entity({name: 'DiscussionLikes'})
 export class DiscussionLikes{
 
     @PrimaryGeneratedColumn('increment', {name: 'id'})

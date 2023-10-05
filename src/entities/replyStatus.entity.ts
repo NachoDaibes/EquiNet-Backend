@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedCo
 import { Reply } from "./reply.entity";
 import { Type } from "./type.entity";
 
-Entity({name: 'ReplyStatus'})
+@Entity({name: 'ReplyStatus'})
 export class ReplyStatus{
     
     @PrimaryGeneratedColumn('increment', {name: 'id'})

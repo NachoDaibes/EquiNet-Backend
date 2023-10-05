@@ -4,7 +4,7 @@ import { Reply } from "./reply.entity"
 import { Type } from "./type.entity"
 import { User } from "./user.entity"
 
-Entity({name: 'Report'})
+@Entity({name: 'Report'})
 export class Report{
 
     @PrimaryGeneratedColumn('increment', {name: 'id'})

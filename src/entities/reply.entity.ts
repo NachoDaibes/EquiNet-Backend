@@ -3,8 +3,9 @@ import { Discussion } from "./discussion.entity"
 import { ReplyStatus } from "./replyStatus.entity"
 import { Report } from "./report.entity"
 import { User } from "./user.entity"
+import { ReplyLikes } from "./replyLikes.entity"
 
-Entity({name: 'Reply'})
+@Entity({name: 'Reply'})
 export class Reply {
    
     @PrimaryGeneratedColumn('increment', {name: 'id'})
@@ -28,5 +29,8 @@ export class Reply {
     replyStatus: ReplyStatus[]
 
     @OneToMany(() => Report, (report) => report.reply)
-    report: Report
+    report: Report[]
+    
+    @OneToMany(() => ReplyLikes, (replyLikes) => replyLikes.reply)
+    replyLikes: ReplyLikes[]
 }

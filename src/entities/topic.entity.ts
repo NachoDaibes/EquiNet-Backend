@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Discussion } from "./discussion.entity"
 import { TopicStatus } from "./topicStatus.entity"
 
-Entity({name: 'Topic'})
+@Entity({name: 'Topic'})
 export class Topic{
 
     @PrimaryGeneratedColumn('increment', {name: 'id'})

@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedCo
 import { Discussion } from "./discussion.entity";
 import { Type } from "./type.entity";
 
-Entity({name: 'DiscussionStatus'})
+@Entity({name: 'DiscussionStatus'})
 export class DiscussionStatus{
 
     @PrimaryGeneratedColumn('increment', {name: 'id'})

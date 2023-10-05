@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedCo
 import { Type } from "./type.entity"
 import { Topic } from "./topic.entity"
 
-Entity({name: 'TopicStatus'})
+@Entity({name: 'TopicStatus'})
 export class TopicStatus{
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
