@@ -55,32 +55,6 @@ export class UserService {
     if(!user){
       return new BadRequestException('No existe un usuario con el id: ' + updateUserDto.id)
     }
-    
-    // const userProfileStatusTypeActivo = await this.typeService.findTypeByCode('UPSTActivo')
-  //   const {profileType, ...toUpdate} = updateUserDto
-  //   let profile
-  //   if(profileType == 'Miembro'){
-  //     profile = await this.profileRepository.findOne({where: {name: 'Miembro Activo'}})
-  //   }
-  //   if(profileType == 'Propietario'){
-  //     profile = await this.profileRepository.findOne({where: {name: 'Propietario Activo'}})
-  //   }
-  //   if(profileType == 'Administrador'){
-  //     profile = await this.profileRepository.findOne({where: {name: 'Administrador Activo'}})
-  //   }
-
-  //   const usertoUpdate = this.userRepository.preload(id, ...updateUserDto)
-
-  //   const userProfileStatus = this.userProfileStatusRepository.create({
-  //     userProfileStatusType: userProfileStatusTypeActivo
-  //  })
-
-  //   const userProfile = this.userProfileRepository.create({
-  //     profile: profile,
-  //     userProfileStatus: [userProfileStatus]
-  //   })
-
-  //   usertoUpdate.
 
     const usertoUpdate = await this.userRepository.preload({id: updateUserDto.id, ...updateUserDto})
 

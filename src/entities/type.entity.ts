@@ -22,6 +22,10 @@ import { Publication } from './publication.entity';
 import { PublicationStatus } from './publicationStatus.entity';
 import { Job } from './job.entity';
 import { DisabilityStatus } from './disabilityStatus.entity';
+import { DiscussionStatus } from './discussionStatus.entity';
+import { TopicStatus } from './topicStatus.entity';
+import { Report } from './report.entity';
+import { ReplyStatus } from './replyStatus.entity';
 
 @Entity({ name: 'Type' })
 export class Type {
@@ -134,4 +138,25 @@ export class Type {
     (disabilityStatus) => disabilityStatus.disabilityStatusReasonType,
   )
   disabilityStatusReason: DisabilityStatus[];
+
+  @OneToMany(() => DiscussionStatus, (discussionStatus) => discussionStatus.discussionStatusType)
+  discussionStatus: DiscussionStatus[]
+
+  @OneToMany(() => DiscussionStatus, (discussionStatusReason) => discussionStatusReason.discussionStatusReasonType)
+  discussionStatusReason: DiscussionStatus[]
+  
+  @OneToMany(() => TopicStatus, (topicStatus) => topicStatus.topicStatusType)
+  topicStatus: TopicStatus[]
+
+  @OneToMany(() => TopicStatus, (topicStatusReason) => topicStatusReason.topicStatusReasonType)
+  topicStatusReason: TopicStatus[]
+  
+  @OneToMany(() => ReplyStatus, (replyStatus) => replyStatus.replyStatusType)
+  replyStatus: ReplyStatus[]
+
+  @OneToMany(() => ReplyStatus, (replyStatusReason) => replyStatusReason.replyStatusReasonType)
+  replyStatusReason: ReplyStatus[]
+  
+  @OneToMany(() => Report, (reportReason) => reportReason.reason)
+  reportReason: Report[]
 }

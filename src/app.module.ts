@@ -47,6 +47,18 @@ import { LocationModule } from './location/location.module';
 import { DepartmentModule } from './department/department.module';
 import { PoliticalDivisionModule } from './political-division/political-division.module';
 import { DisabilityModule } from './disability/disability.module';
+import { NewsModule } from './news/news.module';
+import { Discussion } from './entities/discussion.entity';
+import { Bookmark } from './entities/bookmark.entity';
+import { Report } from './entities/report.entity';
+import { Reply } from './entities/reply.entity';
+import { DiscussionLikes } from './entities/discussionLikes.entity';
+import { DiscussionStatus } from './entities/discussionStatus.entity';
+import { ReplyLikes } from './entities/replyLikes.entity';
+import { ReplyStatus } from './entities/replyStatus.entity';
+import { Topic } from './entities/topic.entity';
+import { TopicStatus } from './entities/topicStatus.entity';
+import { DiscussionUrl } from './entities/discussionUrl.entity';
 import { Image } from './entities/image.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
@@ -71,8 +83,10 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
         ProfileStatus, UserProfile, UserProfileStatus, ProfileType, ProfileTypeStatus, 
-        Publication, Service, Job, Donation, PublicationStatus, Location, Department,
-        PoliticalDivision, PublicationDisability, Disability, DisabilityStatus, Image
+        Publication, Service, Job, Donation, PublicationStatus, Location, Department, Image,
+        PoliticalDivision, PublicationDisability, Disability, DisabilityStatus, Discussion,
+        Bookmark, Report, Reply, DiscussionLikes, DiscussionStatus, ReplyStatus,
+        Topic, TopicStatus, ReplyLikes
       ],
       synchronize: true,
       migrationsRun: true,
@@ -93,6 +107,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     DepartmentModule,
     PoliticalDivisionModule,
     DisabilityModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService,
