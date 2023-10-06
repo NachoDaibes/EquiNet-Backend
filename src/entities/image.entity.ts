@@ -18,7 +18,9 @@ export class Image {
   @Column({ name: 'image', type: 'nvarchar', length: 'max' })
   image: string;
 
-  @ManyToOne(() => Publication, (publication) => publication.images)
+  @ManyToOne(() => Publication, (publication) => publication.images, {
+    orphanedRowAction: 'delete',
+  })
   @JoinColumn({ name: 'image_Id' })
   publication: Publication;
 }

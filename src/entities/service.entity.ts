@@ -1,22 +1,27 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
-import { Publication } from "./publication.entity"
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Publication } from './publication.entity';
 
-@Entity({name: 'Service'})
+@Entity({ name: 'Service' })
 export class Service {
-    
-    @PrimaryGeneratedColumn('increment', {name: 'id'})
-    id: number
+  @PrimaryGeneratedColumn('increment', { name: 'id' })
+  id: number;
 
-    @Column({name: 'address'})
-    address: string
+  @Column({ name: 'address' })
+  address: string;
 
-    @Column({name: 'linkGoogleMaps'})
-    linkGoogleMaps: string
+  @Column({ name: 'linkGoogleMaps', type: 'nvarchar', length: 500 })
+  linkGoogleMaps: string;
 
-    @Column({name: 'schedule'})
-    schedule: string
+  @Column({ name: 'schedule' })
+  schedule: string;
 
-    @OneToOne(() => Publication, (publication) => publication.service)
-    @JoinColumn({name: 'publication_Id'})
-    publication: Publication
+  @OneToOne(() => Publication, (publication) => publication.service)
+  @JoinColumn({ name: 'publication_Id' })
+  publication: Publication;
 }

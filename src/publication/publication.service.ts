@@ -152,8 +152,22 @@ export class PublicationService {
     return publication;
   }
 
-  update(id: number, updatePublicationDto: UpdatePublicationDto) {
-    return `This action updates a #${id} publication`;
+  async update(id: number, updatePublicationDto: UpdatePublicationDto) { 
+    const publication = await this.publicationRepository.preload({
+      id,
+      ...updatePublicationDto,
+    });
+
+    let publicationFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        publicationFinal = await transaction.save(publication);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return publicationFinal;
   }
 
   async remove(id: number) {
