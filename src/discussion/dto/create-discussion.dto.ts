@@ -19,11 +19,14 @@ export class CreateDiscussionDto {
     @IsNotEmpty()
     description: string
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => ImageDto)
-    @IsNotEmpty()
-    images: ImageDto[];
+    // @IsArray()
+    // @ValidateNested({ each: true })
+    // @Type(() => ImageDto)
+    // @IsNotEmpty()
+    // images: ImageDto[];
+
+    @IsString()
+    image: string
 
     @IsObject()
     @ValidateNested()
