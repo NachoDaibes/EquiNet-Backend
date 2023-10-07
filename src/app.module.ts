@@ -60,6 +60,9 @@ import { Topic } from './entities/topic.entity';
 import { TopicStatus } from './entities/topicStatus.entity';
 import { DiscussionUrl } from './entities/discussionUrl.entity';
 import { Image } from './entities/image.entity';
+import { Position } from './entities/position.entity';
+import { PositionModule } from './position/position.module';
+import { PublicationPosition } from './entities/publicationPosition.entity';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -86,7 +89,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
         Publication, Service, Job, Donation, PublicationStatus, Location, Department, Image,
         PoliticalDivision, PublicationDisability, Disability, DisabilityStatus, Discussion,
         Bookmark, Report, Reply, DiscussionLikes, DiscussionStatus, ReplyStatus,
-        Topic, TopicStatus, ReplyLikes
+        Topic, TopicStatus, ReplyLikes, Position, PublicationPosition
       ],
       synchronize: true,
       migrationsRun: true,
@@ -108,9 +111,10 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     PoliticalDivisionModule,
     DisabilityModule,
     NewsModule,
+    PositionModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [AppService
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard,

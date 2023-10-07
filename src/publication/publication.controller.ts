@@ -4,6 +4,7 @@ import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { JwtAuthGuard } from 'src/auth/jwtAuthGuard';
 import { AuthService } from 'src/auth/auth.service';
+import { ImprovePublicationDto } from './dto/improve-publication-dto';
 
 @Controller('publication')
 export class PublicationController {
@@ -21,6 +22,20 @@ export class PublicationController {
   
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
       return this.publicationService.createPublication(createPublicationDto);
+    }else{
+      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
+    }
+  }
+
+  @Post('improve-publication')
+  improvePublication(@Body() improvePublication: ImprovePublicationDto, @Headers('authorization') token: string) {
+    if(!token) {
+      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
+    }
+    const profiles: any[] = this.authService.validateAccess(token)
+  
+    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
+      return this.publicationService.improvePublication(improvePublication);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
     }

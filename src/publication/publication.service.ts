@@ -6,6 +6,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { Publication } from 'src/entities/publication.entity';
 import { PublicationStatus } from 'src/entities/publicationStatus.entity';
 import { TypeService } from 'src/type/type.service';
+import { ImprovePublicationDto } from './dto/improve-publication-dto';
+import { PublicationPosition } from 'src/entities/publicationPosition.entity';
 
 @Injectable()
 export class PublicationService {
@@ -14,6 +16,8 @@ export class PublicationService {
     private readonly publicationRepository: Repository<Publication>,
     @InjectRepository(PublicationStatus)
     private readonly publicationStatusRepository: Repository<PublicationStatus>,
+    @InjectRepository(PublicationPosition)
+    private readonly publicationPositionRepository: Repository<PublicationPosition>,
     private readonly entityManager: EntityManager,
     private readonly typeService: TypeService,
   ) {}
@@ -62,6 +66,8 @@ export class PublicationService {
         'location.department.politicalDivision',
         'publicationDisability',
         'publicationDisability.disability',
+        'publicationPosition',
+        'publicationPosition.position',
       ],
       where: {
         publicationStatus: {
@@ -152,7 +158,7 @@ export class PublicationService {
     return publication;
   }
 
-  async update(id: number, updatePublicationDto: UpdatePublicationDto) { 
+  async update(id: number, updatePublicationDto: UpdatePublicationDto) {
     const publication = await this.publicationRepository.preload({
       id,
       ...updatePublicationDto,
@@ -212,5 +218,27 @@ export class PublicationService {
     });
 
     return publicationFinal;
+  }
+
+  async improvePublication(improvePublicationDto: ImprovePublicationDto) {
+    const publication = this.publicationPositionRepository.create({
+      position: {
+        id: improvePublicationDto.position,
+      },
+      publication: {
+        id: improvePublicationDto.publication,
+      },
+    });
+
+    let publicationFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        publicationFinal = await transaction.save(publication);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return improvePublicationDto;
   }
 }

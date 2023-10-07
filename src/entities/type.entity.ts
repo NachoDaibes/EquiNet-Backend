@@ -26,6 +26,7 @@ import { DiscussionStatus } from './discussionStatus.entity';
 import { TopicStatus } from './topicStatus.entity';
 import { Report } from './report.entity';
 import { ReplyStatus } from './replyStatus.entity';
+import { Position } from './position.entity';
 
 @Entity({ name: 'Type' })
 export class Type {
@@ -159,4 +160,7 @@ export class Type {
   
   @OneToMany(() => Report, (reportReason) => reportReason.reason)
   reportReason: Report[]
+
+  @OneToMany(() => Position, (position) => position.publicationType)
+  position: Position[]
 }

@@ -16,6 +16,8 @@ import { Location } from './location.entity';
 import { PublicationDisability } from './publicationDisability.entity';
 import { Donation } from './donation.entity';
 import { Image } from './image.entity';
+import { Position } from './position.entity';
+import { PublicationPosition } from './publicationPosition.entity';
 
 @Entity({ name: 'Publication' })
 export class Publication {
@@ -29,7 +31,7 @@ export class Publication {
   description: string;
 
   @ManyToOne(() => Type, (type) => type.publication)
-  @JoinColumn({ name: 'publicationType_ Id' })
+  @JoinColumn({ name: 'publicationType_Id' })
   publicationType: Type;
 
   @OneToMany(
@@ -66,4 +68,7 @@ export class Publication {
 
   @OneToMany(() => Image, (image) => image.publication, { cascade: true })
   images: Image[];
+
+  @OneToMany(() => PublicationPosition, (publicationPosition) => publicationPosition.publication)
+  publicationPosition: PublicationPosition[];
 }

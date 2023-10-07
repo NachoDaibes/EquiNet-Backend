@@ -13,13 +13,23 @@ import { UserStatus } from 'src/entities/userStatus.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
+import { PublicationPosition } from 'src/entities/publicationPosition.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Publication, PublicationStatus, Type, Profile, User, UserProfile, UserProfileStatus, UserStatus])
+    TypeOrmModule.forFeature([
+      Publication,
+      PublicationStatus,
+      Type,
+      Profile,
+      User,
+      UserProfile,
+      UserProfileStatus,
+      UserStatus,
+      PublicationPosition,
+    ]),
   ],
   controllers: [PublicationController],
-  providers: [PublicationService, TypeService, AuthService, JwtService]
+  providers: [PublicationService, TypeService, AuthService, JwtService],
 })
 export class PublicationModule {}
- 
