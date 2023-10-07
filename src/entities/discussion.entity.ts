@@ -30,7 +30,7 @@ export class Discussion{
     @JoinColumn({name: 'topic_Id'})
     topic: Topic
 
-    @OneToMany(() => DiscussionStatus, (discussionStatus) => discussionStatus.discussion)
+    @OneToMany(() => DiscussionStatus, (discussionStatus) => discussionStatus.discussion, {cascade: true})
     discussionStatus: DiscussionStatus[]
 
     @OneToMany(() => Report, (report) => report.discussion)

@@ -25,7 +25,7 @@ export class Reply {
     @JoinColumn({name: 'user_Id'})
     author: User
 
-    @OneToMany(() => ReplyStatus, (replyStatus) => replyStatus. reply)
+    @OneToMany(() => ReplyStatus, (replyStatus) => replyStatus. reply, {cascade: true})
     replyStatus: ReplyStatus[]
 
     @OneToMany(() => Report, (report) => report.reply)

@@ -63,6 +63,7 @@ import { Image } from './entities/image.entity';
 import { Position } from './entities/position.entity';
 import { PositionModule } from './position/position.module';
 import { PublicationPosition } from './entities/publicationPosition.entity';
+import { DiscussionModule } from './discussion/discussion.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -82,6 +83,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       // password: 'r00t.R00T',
       password: 'Kalijose-25',
       database: 'EquiNetDev',
+      // database: 'EquiNetQA',
       entities: [
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
@@ -112,6 +114,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     DisabilityModule,
     NewsModule,
     PositionModule,
+    DiscussionModule,
   ],
   controllers: [AppController],
   providers: [AppService
