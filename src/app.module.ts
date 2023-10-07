@@ -59,7 +59,11 @@ import { ReplyStatus } from './entities/replyStatus.entity';
 import { Topic } from './entities/topic.entity';
 import { TopicStatus } from './entities/topicStatus.entity';
 import { DiscussionUrl } from './entities/discussionUrl.entity';
+<<<<<<< Updated upstream
 import { Image } from './entities/image.entity';
+=======
+import { DiscussionModule } from './discussion/discussion.module';
+>>>>>>> Stashed changes
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -79,6 +83,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       // password: 'r00t.R00T',
       password: 'Kalijose-25',
       database: 'EquiNetDev',
+      // database: 'EquiNetQA',
       entities: [
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
         ProfileAccess, ProfileStatus, Type, TypeConfig, UserStatus, News, NewsStatus, 
@@ -108,6 +113,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     PoliticalDivisionModule,
     DisabilityModule,
     NewsModule,
+    DiscussionModule,
   ],
   controllers: [AppController],
   providers: [AppService,
