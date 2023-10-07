@@ -59,11 +59,8 @@ import { ReplyStatus } from './entities/replyStatus.entity';
 import { Topic } from './entities/topic.entity';
 import { TopicStatus } from './entities/topicStatus.entity';
 import { DiscussionUrl } from './entities/discussionUrl.entity';
-<<<<<<< Updated upstream
 import { Image } from './entities/image.entity';
-=======
 import { DiscussionModule } from './discussion/discussion.module';
->>>>>>> Stashed changes
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
