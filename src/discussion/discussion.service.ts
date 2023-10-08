@@ -126,6 +126,40 @@ export class DiscussionService {
     return discussion
   }
 
+  async findAllDiscussionsByTopic(topicId: number){
+
+    const discussionStatusActivo = await this.typeService.findTypeByCode('DiscussionSActivo');
+    const topic = await this.topicRepository.findOne({
+      where: {
+        id: topicId
+      }
+    })
+
+    if(!topic) throw new HttpException('No existe un tema con id = ' + topicId, HttpStatus.NOT_FOUND)
+
+    try {
+      const discussions = await this.discussionRepository.find({
+        relations: ['discussionStatus',
+                  'discussionStatus.discussionStatusType',
+                  'discussionStatus.discussionStatusReasonType',
+                  'topic',
+                  'reply'
+                ],
+        where: {
+          topic: {
+            id: topicId
+          },
+          discussionStatus: {
+            discussionStatusType: discussionStatusActivo
+          }
+        }
+      })
+      return discussions
+    } catch (error) {
+      throw new error
+    }
+  }
+
   update(id: number, updateDiscussionDto: UpdateDiscussionDto) {
     return `This action updates a #${id} discussion`;
   }

@@ -61,6 +61,11 @@ export class DiscussionController {
   findAllDiscussion() {
     return this.discussionService.findAllDiscussions();
   }
+  
+  @Get('/findAllDiscussionsByTopic/:topicId')
+  findAllDiscussionsByTopic(@Param('topicId') topicId: string) {
+    return this.discussionService.findAllDiscussionsByTopic(+topicId);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDiscussionDto: UpdateDiscussionDto) {
