@@ -53,8 +53,13 @@ export class DiscussionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.discussionService.findOne(+id);
+  findOneDiscussion(@Param('id') id: string) {
+    return this.discussionService.findOneDiscussion(+id);
+  }
+  
+  @Get()
+  findAllDiscussion() {
+    return this.discussionService.findAllDiscussions();
   }
 
   @Patch(':id')

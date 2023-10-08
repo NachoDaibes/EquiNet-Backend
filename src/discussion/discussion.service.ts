@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { UpdateDiscussionDto } from './dto/update-discussion.dto';
 import { TypeService } from 'src/type/type.service';
@@ -10,6 +10,7 @@ import { ReplyDiscussionDto } from './dto/replyDiscussion.dto';
 import { Reply } from 'src/entities/reply.entity';
 import { ReplyStatus } from 'src/entities/replyStatus.entity';
 import { Topic } from 'src/entities/topic.entity';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class DiscussionService {
@@ -19,6 +20,8 @@ export class DiscussionService {
     private readonly replyRepository: Repository<Reply>,
     @InjectRepository(ReplyStatus)
     private readonly replyStatusRepository: Repository<ReplyStatus>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Discussion)
     private readonly discussionRepository: Repository<Discussion>,
     @InjectRepository(Topic)
@@ -32,6 +35,13 @@ export class DiscussionService {
 
   async createDiscussion(createDiscussionDto: CreateDiscussionDto) {
     const discussionStatusActivo = await this.typeService.findTypeByCode('DiscussionSActivo');
+    const author = await this.userRepository.findOne({
+      where: {
+        id: createDiscussionDto.author.id
+      }
+    })
+
+    if(!author) throw new HttpException('No existe un usuario con id = ' + createDiscussionDto.author.id, HttpStatus.NOT_FOUND)
 
     const discussion = this.discussionRepository.create(createDiscussionDto);
 
@@ -80,8 +90,40 @@ export class DiscussionService {
     return this.topicRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} discussion`;
+  async findAllDiscussions() {
+    const discussionStatusActivo = await this.typeService.findTypeByCode('DiscussionSActivo');
+    
+    return await this.discussionRepository.find({
+      relations: ['discussionStatus',
+                  'discussionStatus.discussionStatusType',
+                  'discussionStatus.discussionStatusReasonType',
+                  'topic',
+                  'reply'
+                ],
+      where: {
+        discussionStatus: {
+          discussionStatusType: discussionStatusActivo
+        }
+      }
+    })
+  }
+  
+  async findOneDiscussion(id: number) {    
+    const discussion: Discussion = await this.discussionRepository.findOne({
+      relations: ['discussionStatus',
+                  'discussionStatus.discussionStatusType',
+                  'discussionStatus.discussionStatusReasonType',
+                  'topic',
+                  'reply'
+                ],
+      where: {
+        id: id,
+      }
+    })
+
+    if(!discussion) throw new HttpException('No existe una publicación con id = ' + id, HttpStatus.NOT_FOUND)
+
+    return discussion
   }
 
   update(id: number, updateDiscussionDto: UpdateDiscussionDto) {
