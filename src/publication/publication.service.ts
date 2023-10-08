@@ -8,6 +8,8 @@ import { PublicationStatus } from 'src/entities/publicationStatus.entity';
 import { TypeService } from 'src/type/type.service';
 import { ImprovePublicationDto } from './dto/improve-publication-dto';
 import { PublicationPosition } from 'src/entities/publicationPosition.entity';
+import { CreatePublicationByAdminDto } from './dto/create-publication-admin.dto';
+import { UpdatePublicationByAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class PublicationService {
@@ -23,14 +25,14 @@ export class PublicationService {
   ) {}
 
   async createPublication(createPublicationDto: CreatePublicationDto) {
-    const publicationStatusActivo = await this.typeService.findTypeByCode(
-      'PSTActivo',
+    const publicationStatusPendiente = await this.typeService.findTypeByCode(
+      'PSTPendienteDeAutorizacion',
     );
 
     const publication = this.publicationRepository.create(createPublicationDto);
 
     const publicationStatus = this.publicationStatusRepository.create({
-      publicationStatusType: publicationStatusActivo,
+      publicationStatusType: publicationStatusPendiente,
     });
 
     publication.publicationStatus = [publicationStatus];
@@ -47,11 +49,36 @@ export class PublicationService {
     return publicationFinal;
   }
 
-  async findAll() {
+  async createPublicationByAdmin(
+    createPublicationByAdminDto: CreatePublicationByAdminDto,
+  ) {
+    const publication = this.publicationRepository.create(
+      createPublicationByAdminDto,
+    );
+
+    let publicationFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        publicationFinal = await transaction.save(publication);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return publicationFinal;
+  }
+
+  async findAll(
+    disabilityFilter?: string,
+    politicalDivisionFilter?: string,
+    departmentFilter?: string,
+    locationFilter?: string,
+    publicationTypeFilter?: string,
+  ) {
     const publicationStatusActivo = await this.typeService.findTypeByCode(
       'PSTActivo',
     );
-    const publications = await this.publicationRepository.find({
+    let publications = await this.publicationRepository.find({
       relations: [
         'publicationStatus',
         'publicationStatus.publicationStatusType',
@@ -75,7 +102,118 @@ export class PublicationService {
         },
       },
     });
-    if (publications.length === 0) throw new Error('No hay publicaciones.');
+
+    if (disabilityFilter) {
+      publications = publications.filter((publication) =>
+        publication.publicationDisability.some(
+          (disability) => disability.disability?.name === disabilityFilter,
+        ),
+      );
+    }
+    if (politicalDivisionFilter) {
+      publications = publications.filter(
+        (publication) =>
+          publication.location.department?.politicalDivision?.name ===
+          politicalDivisionFilter,
+      );
+    }
+    if (departmentFilter) {
+      publications = publications.filter(
+        (publication) =>
+          publication.location.department?.name === departmentFilter,
+      );
+    }
+    if (locationFilter) {
+      publications = publications.filter(
+        (publication) => publication.location.name === locationFilter,
+      );
+    }
+    if (publicationTypeFilter) {
+      publications = publications.filter(
+        (publication) =>
+          publication.publicationType.name === publicationTypeFilter,
+      );
+    }
+
+    if (publications.length === 0) return [];
+
+    const first = [];
+    const second = [];
+    const third = [];
+    const fourth = [];
+    const fifth = [];
+    for (let i = 0; i <= publications.length - 1; i++) {
+      if (publications[i].publicationPosition) {
+        const publicationPosition = publications[i].publicationPosition;
+        if (publicationPosition?.length) {
+          const length = publicationPosition.length;
+          if (length > 0) {
+            const date = new Date();
+            if (
+              publicationPosition[length - 1].positionRegistrationDateTime <
+                date &&
+              publicationPosition[length - 1].positionExpirationDateTime > date
+            ) {
+              if (publicationPosition[length - 1].position.number === 1) {
+                first.push(publications[i]);
+                publications.splice(i, 1);
+              }
+              if (publicationPosition[length - 1].position.number === 2) {
+                second.push(publications[i]);
+                publications.splice(i, 1);
+              }
+              if (publicationPosition[length - 1].position.number === 3) {
+                third.push(publications[i]);
+                publications.splice(i, 1);
+              }
+              if (publicationPosition[length - 1].position.number === 4) {
+                fourth.push(publications[i]);
+                publications.splice(i, 1);
+              }
+              if (publicationPosition[length - 1].position.number === 5) {
+                fifth.push(publications[i]);
+                publications.splice(i, 1);
+              }
+            }
+          }
+        }
+      }
+    }
+    publications = publications.sort((p1, p2) => Math.random() * 100 - 50);
+    if (first.length > 0) {
+      for (const p of first) {
+        publications.splice(0, 0, p);
+      }
+    }
+    if (second.length > 0) {
+      let offset = 0;
+      if (first.length > 0) offset = first.length - 1;
+      for (const p of second) {
+        publications.splice(1 + offset, 0, p);
+      }
+    }
+    if (third.length > 0) {
+      let offset = 0;
+      if (second.length > 0) offset = second.length - 1;
+      for (const p of third) {
+        publications.splice(2 + offset, 0, p);
+      }
+    }
+    if (fourth.length > 0) {
+      let offset = 0;
+      if (third.length > 0) offset = third.length - 1;
+      for (const p of fourth) {
+        publications.splice(3 + offset, 0, p);
+      }
+    }
+    if (fifth.length > 0) {
+      let offset = 0;
+      if (fourth.length > 0) offset = fourth.length - 1;
+      for (const p of fifth) {
+        publications.splice(4 + offset, 0, p);
+      }
+    }
+
     return publications;
   }
 
@@ -95,6 +233,8 @@ export class PublicationService {
         'location.department.politicalDivision',
         'publicationDisability',
         'publicationDisability.disability',
+        'publicationPosition',
+        'publicationPosition.position',
       ],
     });
     if (publications.length === 0) throw new Error('No hay publicaciones.');
@@ -115,6 +255,8 @@ export class PublicationService {
         'user',
         'publicationDisability',
         'publicationDisability.disability',
+        'publicationPosition',
+        'publicationPosition.position',
       ],
       where: {
         user: {
@@ -146,6 +288,9 @@ export class PublicationService {
         'publicationDisability',
         'publicationDisability.disability',
         'images',
+        'publicationStatus',
+        'publicationStatus.publicationStatusType',
+        'publicationStatus.publicationStatusReasonType',
       ],
       where: {
         id: id,
@@ -159,6 +304,24 @@ export class PublicationService {
   }
 
   async update(id: number, updatePublicationDto: UpdatePublicationDto) {
+    const publication = await this.publicationRepository.preload({
+      id,
+      ...updatePublicationDto,
+    });
+
+    let publicationFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        publicationFinal = await transaction.save(publication);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return publicationFinal;
+  }
+
+  async updateByAdmin(id: number, updatePublicationDto: UpdatePublicationByAdminDto) {
     const publication = await this.publicationRepository.preload({
       id,
       ...updatePublicationDto,

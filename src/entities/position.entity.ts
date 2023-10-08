@@ -27,6 +27,9 @@ export class Position {
   @Column({ name: 'price' })
   price: number;
 
+  @Column({ name: 'code' })
+  code: string;
+
   @ManyToOne(() => Type, (type) => type.position)
   @JoinColumn({ name: 'publicationType_Id' })
   publicationType: Type;
