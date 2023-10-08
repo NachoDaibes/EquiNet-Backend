@@ -98,6 +98,7 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusType',
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
+                  'author',
                   'reply'
                 ],
       where: {
@@ -114,6 +115,7 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusType',
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
+                  'author',
                   'reply'
                 ],
       where: {
@@ -143,6 +145,7 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusType',
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
+                  'author',
                   'reply'
                 ],
         where: {
