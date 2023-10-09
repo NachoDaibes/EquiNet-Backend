@@ -269,10 +269,6 @@ export class PublicationService {
   }
 
   async findOne(id: number) {
-    const publicationStatusActivo = await this.typeService.findTypeByCode(
-      'PSTActivo',
-    );
-
     const publication = await this.publicationRepository.findOne({
       relations: [
         'publicationType',
@@ -294,12 +290,8 @@ export class PublicationService {
       ],
       where: {
         id: id,
-        publicationStatus: {
-          publicationStatusType: publicationStatusActivo,
-        },
       },
     });
-
     return publication;
   }
 
@@ -321,7 +313,10 @@ export class PublicationService {
     return publicationFinal;
   }
 
-  async updateByAdmin(id: number, updatePublicationDto: UpdatePublicationByAdminDto) {
+  async updateByAdmin(
+    id: number,
+    updatePublicationDto: UpdatePublicationByAdminDto,
+  ) {
     const publication = await this.publicationRepository.preload({
       id,
       ...updatePublicationDto,
