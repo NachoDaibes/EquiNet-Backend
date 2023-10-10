@@ -44,8 +44,15 @@ export class NewsService {
   }
 
   async findAll() {
+    const newsStatusActivo = await this.typeService.findTypeByCode('NSActivo',);
+
     return await this.newsRepository.find({
-      relations: ['newsStatus', 'newsStatus.newsStatusType']
+      relations: ['newsStatus', 'newsStatus.newsStatusType'],
+      where: {
+        newsStatus: {
+          newsStatusType: newsStatusActivo
+        }
+      }
     })
   }
 
