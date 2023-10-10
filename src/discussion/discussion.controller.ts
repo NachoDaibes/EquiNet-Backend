@@ -40,16 +40,7 @@ export class DiscussionController {
 
   @Get('FindAllTopics')
   findAllTopics(@Headers('authorization') token: string) {
-    if(!token) {
-      throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
-    }
-    const profiles: any[] = this.authService.validateAccess(token)
-  
-    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.discussionService.findAllTopics();
-    }else{
-      throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
-    }
+    return this.discussionService.findAllTopics();
   }
 
   @Get(':id')

@@ -99,7 +99,8 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
                   'author',
-                  'reply'
+                  'reply',
+                  'reply.author'
                 ],
       where: {
         discussionStatus: {
@@ -116,7 +117,8 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
                   'author',
-                  'reply'
+                  'reply',
+                  'reply.author'
                 ],
       where: {
         id: id,
@@ -146,7 +148,8 @@ export class DiscussionService {
                   'discussionStatus.discussionStatusReasonType',
                   'topic',
                   'author',
-                  'reply'
+                  'reply',
+                  'reply.author'
                 ],
         where: {
           topic: {
