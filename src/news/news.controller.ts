@@ -16,7 +16,7 @@ export class NewsController {
     }
     const profiles: any[] = this.authService.validateAccess(token)
   
-    if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
+    if(profiles.includes('Administrador Activo')){
       return this.newsService.create(createNewsDto);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
