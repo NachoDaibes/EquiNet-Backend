@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Publication } from './publication.entity';
+import { Disability } from './disability.entity';
 
 @Entity({ name: 'Image' })
 export class Image {
@@ -23,4 +25,9 @@ export class Image {
   })
   @JoinColumn({ name: 'image_Id' })
   publication: Publication;
+  
+  @OneToOne(() => Disability, (disability) => disability.image, {
+    orphanedRowAction: 'delete',
+  })
+  disability: Disability
 }

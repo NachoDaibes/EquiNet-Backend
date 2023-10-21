@@ -23,11 +23,13 @@ export class DisabilityService {
       const disabilities = await this.disabilityRepository
         .createQueryBuilder('Disability')
         .select(['Disability.id', 'Disability.name'])
+        .addSelect(['DisabilityImage.id', 'DisabilityImage.name', 'DisabilityImage.image'])
         .leftJoin('Disability.disabilityStatus', 'DisabilityStatus')
         .leftJoin(
           'DisabilityStatus.disabilityStatusType',
           'DisabilityStatusType',
         )
+        .leftJoin('Disability.image','DisabilityImage')
         .where('DisabilityStatusType.code = :code', { code: type.code })
         .getMany();
       return disabilities;

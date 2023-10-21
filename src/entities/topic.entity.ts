@@ -17,6 +17,9 @@ export class Topic{
     @OneToMany(() => Discussion, (discussion) => discussion.topic)
     discussion: Discussion[]
 
+    @Column({name: 'image', nullable: true})
+    image: string
+
     @OneToMany(() => TopicStatus, (topicStatus) => topicStatus.topic)
     topicStatus: TopicStatus[]
 }
