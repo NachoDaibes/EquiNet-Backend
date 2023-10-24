@@ -64,8 +64,11 @@ export class AbmService {
   }
 
   async createLocation(createLocationDto: CreateLocationDto) {
+    const department = await this.departmentRepository.findOne({where: { id: createLocationDto.departmentId.id}})
     const location = this.locationRepository.create(createLocationDto)
-    
+
+    location.department = department    
+
     let finalLocation
     await this.entityManager.transaction(async (transaction) => {
       try {
@@ -78,7 +81,10 @@ export class AbmService {
   }
 
   async createDepartment(createDepartmentDto: CreateDepartmentDto) {
+    const politicalDivision = await this.politicalDivisionRepository.findOne({where: { id: createDepartmentDto.politicalDivisionId.id}})
     const department = this.departmentRepository.create(createDepartmentDto)
+
+    department.politicalDivision = politicalDivision
     
     let finalDepartment
     await this.entityManager.transaction(async (transaction) => {

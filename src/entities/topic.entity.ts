@@ -20,6 +20,6 @@ export class Topic{
     @Column({name: 'image', nullable: true})
     image: string
 
-    @OneToMany(() => TopicStatus, (topicStatus) => topicStatus.topic)
+    @OneToMany(() => TopicStatus, (topicStatus) => topicStatus.topic, {cascade: true})
     topicStatus: TopicStatus[]
 }
