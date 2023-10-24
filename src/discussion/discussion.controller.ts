@@ -4,6 +4,8 @@ import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { UpdateDiscussionDto } from './dto/update-discussion.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { ReplyDiscussionDto } from './dto/replyDiscussion.dto';
+import { DiscussionLikesDto } from './dto/discussionLikes.dto';
+import { ReplyLikesDto } from './dto/replyLikes.dto';
 
 @Controller('discussion')
 export class DiscussionController {
@@ -61,6 +63,16 @@ export class DiscussionController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDiscussionDto: UpdateDiscussionDto) {
     return this.discussionService.update(+id, updateDiscussionDto);
+  }
+
+  @Post('/discussionLike')
+  discussionLike(@Body() discussionLikesDto: DiscussionLikesDto){
+    return this.discussionService.discussionLikes(discussionLikesDto)
+  }
+  
+  @Post('/replyLike')
+  replyLike(@Body() replyLikesDto: ReplyLikesDto){
+    return this.discussionService.replyLikes(replyLikesDto)
   }
 
   @Delete(':id')

@@ -19,6 +19,6 @@ export class Disability{
     @JoinColumn({name: 'image_Id'})
     image: Image
 
-    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disability)
+    @OneToMany(() => DisabilityStatus, (disabilityStatus) => disabilityStatus.disability, {cascade: true})
     disabilityStatus: DisabilityStatus[]
 }

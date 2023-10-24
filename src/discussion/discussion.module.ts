@@ -16,13 +16,28 @@ import { User } from 'src/entities/user.entity';
 import { Reply } from 'src/entities/reply.entity';
 import { ReplyStatus } from 'src/entities/replyStatus.entity';
 import { Topic } from 'src/entities/topic.entity';
+import { DiscussionLikes } from 'src/entities/discussionLikes.entity';
+import { ReplyLikes } from 'src/entities/replyLikes.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Discussion, DiscussionStatus, Type, Topic, Profile, User, UserProfile, UserProfileStatus, UserStatus
-    , Reply, ReplyStatus])
+    TypeOrmModule.forFeature([
+      Discussion,
+      DiscussionStatus,
+      Type,
+      Topic,
+      Profile,
+      DiscussionLikes,
+      ReplyLikes,
+      User,
+      UserProfile,
+      UserProfileStatus,
+      UserStatus,
+      Reply,
+      ReplyStatus,
+    ]),
   ],
   controllers: [DiscussionController],
-  providers: [DiscussionService, AuthService, JwtService, TypeService]
+  providers: [DiscussionService, AuthService, JwtService, TypeService],
 })
 export class DiscussionModule {}
