@@ -4,7 +4,7 @@ import { Publication } from 'src/entities/publication.entity';
 import { PublicationPosition } from 'src/entities/publicationPosition.entity';
 import { PublicationStatus } from 'src/entities/publicationStatus.entity';
 import { TypeService } from 'src/type/type.service';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { IParams } from './interfaces/reports-params.interface';
 import { User } from 'src/entities/user.entity';
 
@@ -43,8 +43,7 @@ export class ReportsService {
     const publicationStatusActivo = await this.typeService.findTypeByCode(
       'PSTActivo',
     );
-    
-    const publications = await this.publicationRepository
+    const publicationsQb = this.publicationRepository
       .createQueryBuilder('Publication')
       .select([
         'Publication.id',
@@ -81,8 +80,9 @@ export class ReportsService {
       })
       .andWhere('PublicationStatus.statusRegistrationDateTime <= :end', {
         end: params.end,
-      })
-      .getMany();
+      });
+    this.applyFilter(publicationsQb, params);
+    const publications = await publicationsQb.getMany();
     if (publications.length !== 0) {
       let res: IDatasetVertical[] = [];
       let startMonth = +params.start.substring(5, 7);
@@ -134,11 +134,14 @@ export class ReportsService {
     let endMonth = +params.end.substring(5, 7);
     let monthDiff = endMonth - startMonth;
     if (monthDiff == 0) {
-      startMonth = startMonth - 1;
-      endMonth = endMonth + 1;
-      monthDiff = monthDiff + 2;
+      if (startMonth == 1) {
+        endMonth = endMonth + 1;
+      } else {
+        startMonth = startMonth - 1;
+      }
+      monthDiff = 1;
     }
-    const publications = await this.publicationRepository
+    const publicationsQb = await this.publicationRepository
       .createQueryBuilder('Publication')
       .select([
         'Publication.id',
@@ -176,8 +179,9 @@ export class ReportsService {
             10,
           )}`,
         ),
-      })
-      .getMany();
+      });
+    this.applyFilter(publicationsQb, params);
+    const publications = await publicationsQb.getMany();
     if (publications.length !== 0) {
       let res: IDatasetLine[] = [];
       let x = 0;
@@ -215,7 +219,7 @@ export class ReportsService {
   }
 
   async totalImprovedPublicationsReport(params: IParams) {
-    const publications = await this.publicationRepository
+    const publicationsQb = await this.publicationRepository
       .createQueryBuilder('Publication')
       .select([
         'Publication.id',
@@ -246,8 +250,9 @@ export class ReportsService {
       })
       .andWhere('PublicationPosition.positionRegistrationDateTime <= :end', {
         end: params.end,
-      })
-      .getMany();
+      });
+    this.applyFilter(publicationsQb, params);
+    const publications = await publicationsQb.getMany();
     if (publications.length !== 0) {
       let res: IDatasetVertical[] = [];
       let x = 0;
@@ -301,7 +306,7 @@ export class ReportsService {
   }
 
   async totalPositionImprovedPublicationsReport(params: IParams) {
-    const publications = await this.publicationRepository
+    const publicationsQb = await this.publicationRepository
       .createQueryBuilder('Publication')
       .select([
         'Publication.id',
@@ -317,8 +322,9 @@ export class ReportsService {
       })
       .andWhere('PublicationPosition.positionRegistrationDateTime <= :end', {
         end: params.end,
-      })
-      .getMany();
+      });
+    this.applyFilter(publicationsQb, params);
+    const publications = await publicationsQb.getMany();
     if (publications.length !== 0) {
       const categories = [];
       const results = [];
@@ -384,7 +390,7 @@ export class ReportsService {
       };
       return res as any;
     } else {
-      let res = { labels: 'Posiciones', data: [0] };
+      let res = { labels: ['Posiciones'], datasets: [{ data: [0] }] };
       return res;
     }
   }
@@ -459,5 +465,45 @@ export class ReportsService {
       let res = { labels: 'Posiciones', data: [0] };
       return res;
     }
+  }
+
+  applyFilter(
+    publicationsQb: SelectQueryBuilder<Publication>,
+    params: IParams,
+  ) {
+    if (params?.disabilityFilter)
+      publicationsQb
+        .leftJoin('Publication.publicationDisability', 'PublicationDisability')
+        .leftJoin('PublicationDisability.disability', 'Disability')
+        .andWhere('Disability.name = :disability', {
+          disability: params.disabilityFilter,
+        });
+    if (
+      params?.politicalDivisionFilter ||
+      params?.departmentFilter ||
+      params?.locationFilter
+    )
+      publicationsQb
+        .leftJoin('Publication.location', 'Location')
+        .leftJoin('Location.department', 'Department')
+        .leftJoin('Department.politicalDivision', 'PoliticalDivision');
+    if (params?.politicalDivisionFilter)
+      publicationsQb.andWhere('PoliticalDivision.name = :politicalDivision', {
+        politicalDivision: params.politicalDivisionFilter,
+      });
+    if (params?.departmentFilter)
+      publicationsQb.andWhere('Department.name = :department', {
+        department: params.departmentFilter,
+      });
+    if (params?.locationFilter)
+      publicationsQb.andWhere('Location.name = :location', {
+        location: params.locationFilter,
+      });
+    if (params?.publicationTypeFilter)
+      publicationsQb
+        .leftJoin('Publication.publicationType', 'PublicationType')
+        .andWhere('PublicationType.name = :publicationType', {
+          publicationType: params.publicationTypeFilter,
+        });
   }
 }
