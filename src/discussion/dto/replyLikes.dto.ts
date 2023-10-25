@@ -4,9 +4,11 @@ import { AssignDto } from "src/common/assign.dto"
 
 export class ReplyLikesDto{
 
-    @IsNumber()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => AssignDto)
     @IsNotEmpty()
-    id: number
+    user: AssignDto
 
     @IsObject()
     @ValidateNested()

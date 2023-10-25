@@ -18,6 +18,8 @@ import { ReplyStatus } from 'src/entities/replyStatus.entity';
 import { Topic } from 'src/entities/topic.entity';
 import { DiscussionLikes } from 'src/entities/discussionLikes.entity';
 import { ReplyLikes } from 'src/entities/replyLikes.entity';
+import { Report } from 'src/entities/report.entity';
+import { Bookmark } from 'src/entities/bookmark.entity';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { ReplyLikes } from 'src/entities/replyLikes.entity';
       UserStatus,
       Reply,
       ReplyStatus,
+      Report, 
+      Bookmark
     ]),
   ],
   controllers: [DiscussionController],

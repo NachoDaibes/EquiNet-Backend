@@ -8,9 +8,11 @@ import {
 import { AssignDto } from 'src/common/assign.dto';
 
 export class DiscussionLikesDto {
-  @IsNumber()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AssignDto)
   @IsNotEmpty()
-  id: number;
+  user: AssignDto;
 
   @IsObject()
   @ValidateNested()

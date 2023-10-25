@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Headers, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Headers, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { DiscussionService } from './discussion.service';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { UpdateDiscussionDto } from './dto/update-discussion.dto';
@@ -6,6 +6,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { ReplyDiscussionDto } from './dto/replyDiscussion.dto';
 import { DiscussionLikesDto } from './dto/discussionLikes.dto';
 import { ReplyLikesDto } from './dto/replyLikes.dto';
+import { CreateReportDto } from './dto/createReport.dto';
 
 @Controller('discussion')
 export class DiscussionController {
@@ -44,11 +45,6 @@ export class DiscussionController {
   findAllTopics(@Headers('authorization') token: string) {
     return this.discussionService.findAllTopics();
   }
-
-  @Get(':id')
-  findOneDiscussion(@Param('id') id: string) {
-    return this.discussionService.findOneDiscussion(+id);
-  }
   
   @Get()
   findAllDiscussion() {
@@ -70,9 +66,44 @@ export class DiscussionController {
     return this.discussionService.discussionLikes(discussionLikesDto)
   }
   
+  @Post('/bookmark')
+  createBookmark(@Body() createBookmarkDto: DiscussionLikesDto){
+    return this.discussionService.createBookmark(createBookmarkDto)
+  }
+  
+  @Get('/findAllBookmarkedDiscussions')
+  findAllBookmarkedDiscussions(@Query('user') user: string){
+    return this.discussionService.findAllBookmarkedDiscussions(+user)
+  }
+  
   @Post('/replyLike')
   replyLike(@Body() replyLikesDto: ReplyLikesDto){
     return this.discussionService.replyLikes(replyLikesDto)
+  }
+
+  @Get('/findDiscussionsByTitle')
+  findDiscussionByTitle(@Query('title') title: string){
+    return this.discussionService.findDiscussionByTitle(title)
+  }
+  
+  @Get('/findAllLikedDiscussion')
+  findAllLikedDiscussion(@Query('user') user: string){
+    return this.discussionService.findAllLikedDiscussion(+user)
+  }
+
+  @Get(':id')
+  findOneDiscussion(@Param('id') id: string) {
+    return this.discussionService.findOneDiscussion(+id);
+  }
+
+  @Post('/reportDiscussion')
+  reportDiscussion(@Body() createReportDto: CreateReportDto){
+    return this.discussionService.reportDiscussion(createReportDto)
+  }
+  
+  @Post('/reportReply')
+  reportReply(@Body() createReportDto: CreateReportDto){
+    return this.discussionService.reportReply(createReportDto)
   }
 
   @Delete(':id')

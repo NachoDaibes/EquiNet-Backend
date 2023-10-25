@@ -1,9 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { UpdateDiscussionDto } from './dto/update-discussion.dto';
 import { TypeService } from 'src/type/type.service';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Like, Repository } from 'typeorm';
 import { Discussion } from 'src/entities/discussion.entity';
 import { DiscussionStatus } from 'src/entities/discussionStatus.entity';
 import { ReplyDiscussionDto } from './dto/replyDiscussion.dto';
@@ -15,6 +15,11 @@ import { DiscussionLikesDto } from './dto/discussionLikes.dto';
 import { DiscussionLikes } from 'src/entities/discussionLikes.entity';
 import { ReplyLikesDto } from './dto/replyLikes.dto';
 import { ReplyLikes } from 'src/entities/replyLikes.entity';
+import { CreateReportDto } from './dto/createReport.dto';
+import { Report } from 'src/entities/report.entity';
+import { Type } from 'src/entities/type.entity';
+import { CreateReportReplyDto } from './dto/createReportReply.dto';
+import { Bookmark } from 'src/entities/bookmark.entity';
 
 @Injectable()
 export class DiscussionService {
@@ -35,6 +40,12 @@ export class DiscussionService {
     private readonly discussionLikesRepository: Repository<DiscussionLikes>,
     @InjectRepository(ReplyLikes)
     private readonly replyLikesRepository: Repository<ReplyLikes>,
+    @InjectRepository(Report)
+    private readonly reportRepository: Repository<Report>,
+    @InjectRepository(Type)
+    private readonly typeRepository: Repository<Type>,
+    @InjectRepository(Bookmark)
+    private readonly bookmarkRepository: Repository<Bookmark>,
     @InjectEntityManager()
     private entityManager: EntityManager,
     private typeService: TypeService,
@@ -195,20 +206,30 @@ export class DiscussionService {
 
   async discussionLikes(discussionLikesDto: DiscussionLikesDto) {
     const user = await this.userRepository.findOne({
-      where: { id: discussionLikesDto.id },
+      where: { id: discussionLikesDto.user.id },
     });
-    const discussion = await this.replyRepository.findOne({
+    const discussion = await this.discussionRepository.findOne({
       where: {
-        id: discussionLikesDto.discussion.id
-      }
-    })
-    if(!user) throw new HttpException('No existe un usuario con el id ingresado', HttpStatus.NOT_FOUND)
-    if(!discussion) throw new HttpException('No existe una discusión con el id ingresado', HttpStatus.NOT_FOUND)
-
-    const discussionLikes = this.discussionLikesRepository.create({
-      user: user,
-      discussion: discussion
+        id: discussionLikesDto.discussion.id,
+      },
     });
+    console.log(user, discussion);
+
+    if (!user) {
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (!discussion) {
+      throw new HttpException(
+        'No existe una discusión con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const discussionLikes =
+      this.discussionLikesRepository.create(discussionLikesDto);
 
     let finalDiscussionLikes;
     await this.entityManager.transaction(async (transaction) => {
@@ -223,21 +244,26 @@ export class DiscussionService {
 
   async replyLikes(replyLikesDto: ReplyLikesDto) {
     const user = await this.userRepository.findOne({
-      where: { id: replyLikesDto.id },
+      where: { id: replyLikesDto.user.id },
     });
     const reply = await this.replyRepository.findOne({
       where: {
-        id: replyLikesDto.reply.id
-      }
-    })
-
-    if(!user) throw new HttpException('No existe un usuario con el id ingresado', HttpStatus.NOT_FOUND)
-    if(!reply) throw new HttpException('No existe una respuesta con el id ingresado', HttpStatus.NOT_FOUND)
-
-    const replyLike = this.replyLikesRepository.create({
-      user: user,
-      reply: reply
+        id: replyLikesDto.reply.id,
+      },
     });
+
+    if (!user)
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    if (!reply)
+      throw new HttpException(
+        'No existe una respuesta con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+
+    const replyLike = this.replyLikesRepository.create(replyLikesDto);
 
     let finalReplyLikes;
     await this.entityManager.transaction(async (transaction) => {
@@ -248,7 +274,209 @@ export class DiscussionService {
       }
     });
     return finalReplyLikes;
-    
+  }
+
+  async findDiscussionByTitle(title: string) {
+    const discussionStatusActivo = await this.typeService.findTypeByCode(
+      'DiscussionSActivo',
+    );
+    let finalTitle = title.split('$25').join(' ');
+
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+      ],
+      where: {
+        title: Like(`%${finalTitle}%`),
+        discussionStatus: {
+          discussionStatusType: discussionStatusActivo,
+        },
+      },
+    });
+
+    return discussions;
+  }
+
+  async findAllLikedDiscussion(user: number) {
+    const discussionStatusActivo = await this.typeService.findTypeByCode(
+      'DiscussionSActivo',
+    );
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+      ],
+      where: {
+        discussionStatus: {
+          discussionStatusType: discussionStatusActivo,
+        },
+        discussionLikes: {
+          user: {
+            id: user,
+          },
+        },
+      },
+    });
+
+    return discussions;
+  }
+ 
+  async findAllBookmarkedDiscussions(user: number) {
+    const discussionStatusActivo = await this.typeService.findTypeByCode(
+      'DiscussionSActivo',
+    );
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+      ],
+      where: {
+        discussionStatus: {
+          discussionStatusType: discussionStatusActivo,
+        },
+        bookmark: {
+          user: {
+            id: user
+          }
+        }
+      },
+    });
+
+    return discussions;
+  }
+
+  async reportDiscussion(createReportDto: CreateReportDto) {
+    if(!createReportDto.discussion) throw new BadRequestException('El id de la discusión es obligatorio')
+    const reportType = await this.typeRepository.findOne({
+      where: { code: createReportDto.reason.code },
+    });
+    const discussion = await this.discussionRepository.findOne({
+      where: { id: createReportDto.discussion.id },
+    });
+    const user = await this.userRepository.findOne({
+      where: { id: createReportDto.user.id },
+    });
+
+    if (!user)
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    if (!reportType)
+      throw new HttpException(
+        'No existe una razón de reporte con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    if (!discussion)
+      throw new HttpException(
+        'No existe una discusión con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+
+    const reportDiscussion = this.reportRepository.create(createReportDto);
+    reportDiscussion.reason = reportType
+    let finalReport;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        finalReport = await transaction.save(reportDiscussion);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+    return finalReport;
+  }
+
+  async reportReply(createReporDto: CreateReportDto) {
+    if(!createReporDto.reply) throw new BadRequestException('El id de la respuesta es obligatorio')
+    const reportType = await this.typeRepository.findOne({
+      where: { code: createReporDto.reason.code },
+    });
+    const reply = await this.replyRepository.findOne({
+      where: { id: createReporDto.reply.id },
+    });
+    const user = await this.userRepository.findOne({
+      where: { id: createReporDto.user.id },
+    });
+
+    if (!user)
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    if (!reportType)
+      throw new HttpException(
+        'No existe una razón de reporte con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    if (!reply)
+      throw new HttpException(
+        'No existe una respuesta con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+
+    const reportReply = this.reportRepository.create(createReporDto);
+    reportReply.reason = reportType
+
+    let finalReport;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        finalReport = await transaction.save(reportReply);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+    return finalReport;
+  }
+
+  async createBookmark(createBookmarkDto: DiscussionLikesDto) {
+    const user = await this.userRepository.findOne({
+      where: { id: createBookmarkDto.user.id },
+    });
+    const discussion = await this.discussionRepository.findOne({
+      where: {
+        id: createBookmarkDto.discussion.id,
+      },
+    });
+    if (!user) {
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (!discussion) {
+      throw new HttpException(
+        'No existe una discusión con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const bookmark = this.bookmarkRepository.create(createBookmarkDto);
+
+    let finalBookmark;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        finalBookmark = await transaction.save(bookmark);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+    return finalBookmark;
   }
 
   update(id: number, updateDiscussionDto: UpdateDiscussionDto) {

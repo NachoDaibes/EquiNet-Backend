@@ -20,11 +20,11 @@ export class Report{
     @JoinColumn({name: 'user_Id'})
     user: User
 
-    @ManyToOne(() => Reply, (reply) => reply.report)
+    @ManyToOne(() => Reply, (reply) => reply.report, {nullable: true})
     @JoinColumn({name: 'reply_Id'})
     reply: Reply
 
-    @ManyToOne(() => Discussion, (discussion) => discussion.report)
+    @ManyToOne(() => Discussion, (discussion) => discussion.report, {nullable: true})
     @JoinColumn({name: 'report_Id'})
     discussion: Discussion
 
