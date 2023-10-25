@@ -7,6 +7,7 @@ import { ReplyDiscussionDto } from './dto/replyDiscussion.dto';
 import { DiscussionLikesDto } from './dto/discussionLikes.dto';
 import { ReplyLikesDto } from './dto/replyLikes.dto';
 import { CreateReportDto } from './dto/createReport.dto';
+import { UpdateReplyDto } from './dto/updateReply.dto';
 
 @Controller('discussion')
 export class DiscussionController {
@@ -56,9 +57,14 @@ export class DiscussionController {
     return this.discussionService.findAllDiscussionsByTopic(+topicId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDiscussionDto: UpdateDiscussionDto) {
-    return this.discussionService.update(+id, updateDiscussionDto);
+  @Patch('updateDiscussion/:id')
+  updateDiscussion(@Param('id') id: string, @Body() updateDiscussionDto: UpdateDiscussionDto) {
+    return this.discussionService.updateDiscussion(+id, updateDiscussionDto);
+  }
+  
+  @Patch('updateReply/:id')
+  updateReply(@Param('id') id: string, @Body() updateReplyDto: UpdateReplyDto) {
+    return this.discussionService.updateReply(+id, updateReplyDto);
   }
 
   @Post('/discussionLike')
@@ -106,8 +112,12 @@ export class DiscussionController {
     return this.discussionService.reportReply(createReportDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.discussionService.remove(+id);
+  @Delete('removeDiscussion/:id')
+  removeDiscussion(@Param('id') id: string){
+    return this.discussionService.removeDiscussion(+id)
+  }
+  @Delete('removeReply/:id')
+  removeReply(@Param('id') id: string){
+    return this.discussionService.removeReply(+id)
   }
 }

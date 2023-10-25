@@ -11,7 +11,7 @@ export class Reply {
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
-    @Column({name: 'content'})
+    @Column({name: 'content', length: 4000})
     content: string
 
     @Column({name: 'image'})
