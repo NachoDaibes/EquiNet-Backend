@@ -97,6 +97,21 @@ export class DiscussionController {
     return this.discussionService.findAllLikedDiscussion(+user)
   }
   
+  @Get('/findAllLikedReply')
+  findAllLikedReply(@Query('user') user: string){
+    return this.discussionService.findAllLikedReply(+user)
+  }
+  
+  @Get('/findAllUserReplies')
+  findAllUserReplies(@Query('user') user: string){
+    return this.discussionService.findAllUserReplies(+user)
+  }
+
+  @Get('/findAllUserDiscussions')
+  findAllUserDiscussions(@Query('user') user: string){
+    return this.discussionService.findAllUserDiscussions(+user)
+  }
+
   @Get('/findAllReportedDiscussions')
   findAllReportedDiscussions(){
     return this.discussionService.findAllReportedDiscussions()

@@ -345,6 +345,63 @@ export class DiscussionService {
     return discussions;
   }
 
+  async findAllLikedReply(user: number) {
+    const replys = await this.replyRepository.find({
+      relations: [
+        'replyStatus',
+        'replyStatus.replyStatusType',
+        'replyStatus.replyStatusReasonType',
+        'author',
+      ],
+      where: {
+        replyLikes: {
+          user: {
+            id: user,
+          },
+        },
+      },
+    });
+    return replys;
+  }
+
+  async findAllUserReplies(user: number) {
+    const replys = await this.replyRepository.find({
+      relations: [
+        'replyStatus',
+        'replyStatus.replyStatusType',
+        'replyStatus.replyStatusReasonType',
+        'author',
+      ],
+      where: {
+        author: {
+          id: user
+        }
+      },
+    });
+    return replys;
+  }
+  
+  async findAllUserDiscussions(user: number) {
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+      ],
+      where: {
+        author: {
+          id: user
+        }
+      },
+    });
+
+    return discussions;
+  }
+
   async findAllReportedDiscussions() {
     const discussionStatusActivo = await this.typeService.findTypeByCode(
       'DiscussionSActivo',

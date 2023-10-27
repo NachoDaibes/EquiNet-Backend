@@ -98,7 +98,7 @@ export class PublicationService {
       ],
       where: {
         publicationStatus: {
-          publicationStatusType: publicationStatusActivo,
+          publicationStatusType:  publicationStatusActivo,
         },
       },
     });
