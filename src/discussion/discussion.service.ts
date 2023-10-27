@@ -136,11 +136,11 @@ export class DiscussionService {
         'reply',
         'reply.author',
       ],
-      where: {
-        discussionStatus: {
-          discussionStatusType: discussionStatusActivo,
-        },
-      },
+      // where: {
+      //   discussionStatus: {
+      //     discussionStatusType: discussionStatusActivo,
+      //   },
+      // },
     });
   }
 
@@ -202,9 +202,9 @@ export class DiscussionService {
           topic: {
             id: topicId,
           },
-          discussionStatus: {
-            discussionStatusType: discussionStatusActivo,
-          },
+          // discussionStatus: {
+          //   discussionStatusType: discussionStatusActivo,
+          // },
         },
       });
       return discussions;
@@ -303,11 +303,15 @@ export class DiscussionService {
       ],
       where: {
         title: Like(`%${finalTitle}%`),
-        discussionStatus: {
-          discussionStatusType: discussionStatusActivo,
-        },
       },
     });
+
+    // let finalDiscussions: Discussion[] = []
+    // for (const discussion of discussions) {
+    //   if(discussion.discussionStatus[(discussion.discussionStatus.length - 1)]?.discussionStatusType == discussionStatusActivo){
+    //     finalDiscussions.push(discussion)
+    //   }
+    // }
 
     return discussions;
   }
@@ -327,9 +331,9 @@ export class DiscussionService {
         'reply.author',
       ],
       where: {
-        discussionStatus: {
-          discussionStatusType: discussionStatusActivo,
-        },
+        // discussionStatus: {
+        //   discussionStatusType: discussionStatusActivo,
+        // },
         discussionLikes: {
           user: {
             id: user,
@@ -339,6 +343,36 @@ export class DiscussionService {
     });
 
     return discussions;
+  }
+
+  async findAllReportedDiscussions() {
+    const discussionStatusActivo = await this.typeService.findTypeByCode(
+      'DiscussionSActivo',
+    );
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+        'report'
+      ],
+      // where: {
+      //   discussionStatus: {
+      //     discussionStatusType: discussionStatusActivo,
+      //   },
+      // },
+    });
+    let finalDiscussions: Discussion[] = []
+    discussions.forEach((discussion) => {
+      if(discussion.report[0]?.id){
+        finalDiscussions.push(discussion)
+      }
+    })
+    return finalDiscussions
   }
 
   async findAllBookmarkedDiscussions(user: number) {
@@ -356,9 +390,9 @@ export class DiscussionService {
         'reply.author',
       ],
       where: {
-        discussionStatus: {
-          discussionStatusType: discussionStatusActivo,
-        },
+        // discussionStatus: {
+        //   discussionStatusType: discussionStatusActivo,
+        // },
         bookmark: {
           user: {
             id: user,
@@ -552,9 +586,9 @@ export class DiscussionService {
         'discussionStatus.discussionStatusReasonType',
       ],
       where: {
-        discussionStatus: {
-          discussionStatusType: discussionStatusActivo,
-        },
+        // discussionStatus: {
+        //   discussionStatusType: discussionStatusActivo,
+        // },
         id: id,
       },
     });
@@ -597,9 +631,9 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
       ],
       where: {
-        replyStatus: {
-          replyStatusType: replyStatusActivo,
-        },
+        // replyStatus: {
+        //   replyStatusType: replyStatusActivo,
+        // },
         id: id,
       },
     });

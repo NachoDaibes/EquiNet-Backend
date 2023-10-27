@@ -44,9 +44,9 @@ export class UserService {
       relations: ['legalPerson', 'individualPerson', 'userStatus', 'legalPerson', 'individualPerson', 'userStatus.userStatusType'],
       where: {
         id: id,
-        userStatus: {
-          userStatusType: userStatusActivo
-        }
+        // userStatus: {
+        //   userStatusType: userStatusActivo
+        // }
       }
     })
 

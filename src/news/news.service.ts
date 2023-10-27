@@ -48,11 +48,11 @@ export class NewsService {
 
     return await this.newsRepository.find({
       relations: ['newsStatus', 'newsStatus.newsStatusType'],
-      where: {
-        newsStatus: {
-          newsStatusType: newsStatusActivo
-        }
-      }
+      // where: {
+      //   newsStatus: {
+      //     newsStatusType: newsStatusActivo
+      //   }
+      // }
     })
   }
 

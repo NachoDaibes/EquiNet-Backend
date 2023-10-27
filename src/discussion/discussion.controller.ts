@@ -96,6 +96,11 @@ export class DiscussionController {
   findAllLikedDiscussion(@Query('user') user: string){
     return this.discussionService.findAllLikedDiscussion(+user)
   }
+  
+  @Get('/findAllReportedDiscussions')
+  findAllReportedDiscussions(){
+    return this.discussionService.findAllReportedDiscussions()
+  }
 
   @Get(':id')
   findOneDiscussion(@Param('id') id: string) {
