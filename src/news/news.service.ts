@@ -9,7 +9,6 @@ import { TypeService } from 'src/type/type.service';
 
 @Injectable()
 export class NewsService {
-
   constructor(
     @InjectRepository(News)
     private readonly newsRepository: Repository<News>,
@@ -17,11 +16,11 @@ export class NewsService {
     private readonly newsStatusRepository: Repository<NewsStatus>,
     @InjectEntityManager()
     private entityManager: EntityManager,
-    private readonly typeService: TypeService
-  ){}
+    private readonly typeService: TypeService,
+  ) {}
 
   async create(createNewsDto: CreateNewsDto) {
-    const newsStatusAactivo = await this.typeService.findTypeByCode('NSActivo',);
+    const newsStatusAactivo = await this.typeService.findTypeByCode('NSActivo');
 
     const news = this.newsRepository.create(createNewsDto);
 
@@ -44,20 +43,34 @@ export class NewsService {
   }
 
   async findAll() {
-    const newsStatusActivo = await this.typeService.findTypeByCode('NSActivo',);
+    const newsStatusActivo = await this.typeService.findTypeByCode('NSActivo');
 
     return await this.newsRepository.find({
-      relations: ['newsStatus', 'newsStatus.newsStatusType'],
+      relations: [
+        'newsStatus',
+        'newsStatus.newsStatusType',
+        'newsStatus.newsStatusReasonType',
+      ],
       // where: {
       //   newsStatus: {
       //     newsStatusType: newsStatusActivo
       //   }
       // }
-    })
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} news`;
+  async findOne(id: number) {
+    const news = await this.newsRepository.findOne({
+      relations: [
+        'newsStatus',
+        'newsStatus.newsStatusType',
+        'newsStatus.newsStatusReasonType',
+      ],
+      where: {
+        id: id
+      }
+    });
+    return news
   }
 
   update(id: number, updateNewsDto: UpdateNewsDto) {
@@ -65,20 +78,22 @@ export class NewsService {
   }
 
   async remove(id: number) {
-
     const news = await this.newsRepository.findOne({
       relations: ['newsStatus', 'newsStatus.newsStatusType'],
-      where: {id: id}
-    })
+      where: { id: id },
+    });
 
-    if(!news) throw new NotFoundException('No existe una publicación con id = ' + id)
-    const newsStatusInactivo = await this.typeService.findTypeByCode('NSInactivo',);
+    if (!news)
+      throw new NotFoundException('No existe una publicación con id = ' + id);
+    const newsStatusInactivo = await this.typeService.findTypeByCode(
+      'NSInactivo',
+    );
 
     const newsStatus = this.newsStatusRepository.create({
       newsStatusType: newsStatusInactivo,
     });
 
-    news.newsStatus.push(newsStatus)
+    news.newsStatus.push(newsStatus);
 
     let newsFinal;
     await this.entityManager.transaction(async (transaction) => {

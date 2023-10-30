@@ -11,6 +11,7 @@ import { Profile } from 'src/entities/profile.entity';
 import { UserProfile } from 'src/entities/userProfile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,7 @@ export class AuthService {
     private readonly entityManager: EntityManager,
     private jwtAuthService: JwtService,
     private typeService: TypeService,
+    private emailService: EmailService
   ){}
 
   async registerUser(registerAuthDto: RegisterAuthDto) {
@@ -44,6 +46,10 @@ export class AuthService {
         email: email
       }
     }) 
+
+    //se genera un código aleatorio de 4 dígitos
+    const codigo = Math.floor(1000 + Math.random() * 9000).toString()
+    await this.emailService.sendEmail(user.email, 'Validación de EquiNet', `Su código verificador de EquiNet es ${codigo}`)
 
     if(user) throw new HttpException('Ya existe un usuario con el email ingresado', 404)
 
@@ -128,6 +134,10 @@ export class AuthService {
     }
 
     return data
+  }
+
+  validateCode(codigoGenerado: string, codigoIngresado): Boolean{
+    return codigoGenerado == codigoIngresado
   }
 
   validateAccess(token: string){

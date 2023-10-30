@@ -11,12 +11,13 @@ import { UserProfile } from 'src/entities/userProfile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
 import { JwtService } from '@nestjs/jwt';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Type, Profile, UserProfile, UserProfileStatus, UserStatus, UserProfile, UserProfileStatus, Profile])    
   ],
   controllers: [UserController],
-  providers: [UserService, TypeService, AuthService, JwtService]
+  providers: [UserService, TypeService, AuthService, JwtService, EmailService]
 })
 export class UserModule {}

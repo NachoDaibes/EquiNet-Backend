@@ -13,6 +13,7 @@ import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { TypeService } from 'src/type/type.service';
 import { Type } from 'src/entities/type.entity';
 import { UserStatus } from 'src/entities/userStatus.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -25,6 +26,6 @@ import { UserStatus } from 'src/entities/userStatus.entity';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy, TypeService]
+  providers: [AuthService, UserService, JwtStrategy, TypeService, EmailService]
 })
 export class AuthModule {}

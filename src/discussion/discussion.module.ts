@@ -20,6 +20,7 @@ import { DiscussionLikes } from 'src/entities/discussionLikes.entity';
 import { ReplyLikes } from 'src/entities/replyLikes.entity';
 import { Report } from 'src/entities/report.entity';
 import { Bookmark } from 'src/entities/bookmark.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -42,6 +43,6 @@ import { Bookmark } from 'src/entities/bookmark.entity';
     ]),
   ],
   controllers: [DiscussionController],
-  providers: [DiscussionService, AuthService, JwtService, TypeService],
+  providers: [DiscussionService, AuthService, JwtService, TypeService, EmailService],
 })
 export class DiscussionModule {}

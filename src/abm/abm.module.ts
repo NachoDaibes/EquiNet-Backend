@@ -18,6 +18,7 @@ import { UserProfile } from 'src/entities/userProfile.entity';
 import { Profile } from 'src/entities/profile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -39,6 +40,6 @@ import { UserStatus } from 'src/entities/userStatus.entity';
     ]),
   ],
   controllers: [AbmController],
-  providers: [AbmService, TypeService, AuthService, JwtService],
+  providers: [AbmService, TypeService, AuthService, JwtService, EmailService],
 })
 export class AbmModule {}

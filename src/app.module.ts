@@ -65,6 +65,7 @@ import { PositionModule } from './position/position.module';
 import { PublicationPosition } from './entities/publicationPosition.entity';
 import { DiscussionModule } from './discussion/discussion.module';
 import { AbmModule } from './abm/abm.module';
+import { EmailModule } from './email/email.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -117,6 +118,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     PositionModule,
     DiscussionModule,
     AbmModule,
+    EmailModule
   ],
   controllers: [AppController],
   providers: [AppService

@@ -13,12 +13,13 @@ import { UserProfile } from 'src/entities/userProfile.entity';
 import { User } from 'src/entities/user.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([News, NewsStatus, Type, Profile, UserProfile, User, UserProfileStatus, UserStatus])
   ],
   controllers: [NewsController],
-  providers: [NewsService, AuthService, JwtService, TypeService],
+  providers: [NewsService, AuthService, JwtService, TypeService, EmailService],
 })
 export class NewsModule {}

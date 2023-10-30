@@ -96,11 +96,6 @@ export class PublicationService {
         'publicationPosition',
         'publicationPosition.position',
       ],
-      where: {
-        publicationStatus: {
-          publicationStatusType:  publicationStatusActivo,
-        },
-      },
     });
 
     if (disabilityFilter) {

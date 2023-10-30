@@ -47,6 +47,12 @@ export class DiscussionController {
     return this.discussionService.findAllTopics();
   }
   
+  
+  @Get('discussionCountByTopic')
+  discussionCountByTopic(@Headers('authorization') token: string, @Query('topicId') topicId: string) {
+    return this.discussionService.discussionCountByTopic(+topicId);
+  }
+  
   @Get()
   findAllDiscussion() {
     return this.discussionService.findAllDiscussions();
@@ -117,9 +123,14 @@ export class DiscussionController {
     return this.discussionService.findAllReportedDiscussions()
   }
 
-  @Get(':id')
+  @Get('findOneDiscussion/:id')
   findOneDiscussion(@Param('id') id: string) {
     return this.discussionService.findOneDiscussion(+id);
+  }
+  
+  @Get('findOneReply/:id')
+  findOneReply(@Param('id') id: string) {
+    return this.discussionService.findOneReply(+id);
   }
 
   @Post('/reportDiscussion')

@@ -14,6 +14,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
 import { PublicationPosition } from 'src/entities/publicationPosition.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -30,6 +31,6 @@ import { PublicationPosition } from 'src/entities/publicationPosition.entity';
     ]),
   ],
   controllers: [PublicationController],
-  providers: [PublicationService, TypeService, AuthService, JwtService],
+  providers: [PublicationService, TypeService, AuthService, JwtService, EmailService],
 })
 export class PublicationModule {}

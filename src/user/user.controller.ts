@@ -25,6 +25,7 @@ export class UserController {
   @Get()
   findAll(@Headers('authorization') token: string) {
 
+    return this.userService.findAll();
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }

@@ -118,7 +118,13 @@ export class DiscussionService {
   }
 
   findAllTopics() {
-    return this.topicRepository.find();
+    return this.topicRepository.find({
+      relations: [
+        'topicStatus',
+        'topicStatus.topicStatusType',
+        'topicStatus.topicStatusReasonType',
+      ],
+    });
   }
 
   async findAllDiscussions() {
@@ -126,7 +132,7 @@ export class DiscussionService {
       'DiscussionSActivo',
     );
 
-    return await this.discussionRepository.find({
+    const discussions = await this.discussionRepository.find({
       relations: [
         'discussionStatus',
         'discussionStatus.discussionStatusType',
@@ -136,12 +142,25 @@ export class DiscussionService {
         'reply',
         'reply.author',
       ],
-      // where: {
-      //   discussionStatus: {
-      //     discussionStatusType: discussionStatusActivo,
-      //   },
-      // },
     });
+
+    let finalDiscussions = [];
+    for (const discussion of discussions) {
+      const countReplies = await this.replyRepository.count({
+        where: {
+          discussion: {
+            id: discussion.id,
+          },
+        },
+      });
+
+      finalDiscussions.push({
+        discussion: discussion,
+        countReplies: countReplies,
+      });
+    }
+
+    return finalDiscussions;
   }
 
   async findOneDiscussion(id: number) {
@@ -169,6 +188,25 @@ export class DiscussionService {
       );
 
     return discussion;
+  }
+
+  async findOneReply(id: number){
+    const reply = await this.replyRepository.findOne({
+      relations: [
+
+      ],
+      where: {
+        id: id
+      }
+    })
+
+    if (!reply)
+      throw new HttpException(
+        'No existe una respuesta con id = ' + id,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply
   }
 
   async findAllDiscussionsByTopic(topicId: number) {
@@ -207,10 +245,44 @@ export class DiscussionService {
           // },
         },
       });
+
       return discussions;
     } catch (error) {
       throw new error();
     }
+  }
+
+  async discussionCountByTopic(topicId: number) {
+    const topic = await this.topicRepository.findOne({
+      where: {
+        id: topicId,
+      },
+    });
+
+    const discussionsCount = await this.discussionRepository.count({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+      ],
+      where: {
+        topic: {
+          id: topicId,
+        },
+        // discussionStatus: {
+        //   discussionStatusType: discussionStatusActivo,
+        // },
+      },
+    });
+
+    return {
+      topic: topic,
+      cantidad: discussionsCount,
+    };
   }
 
   async discussionLikes(discussionLikesDto: DiscussionLikesDto) {
@@ -300,6 +372,9 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
       ],
       where: {
         title: Like(`%${finalTitle}%`),
@@ -329,6 +404,9 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
       ],
       where: {
         // discussionStatus: {
@@ -346,12 +424,13 @@ export class DiscussionService {
   }
 
   async findAllLikedReply(user: number) {
-    const replys = await this.replyRepository.find({
+    const replies = await this.replyRepository.find({
       relations: [
         'replyStatus',
         'replyStatus.replyStatusType',
         'replyStatus.replyStatusReasonType',
         'author',
+        'discussion',
       ],
       where: {
         replyLikes: {
@@ -361,26 +440,27 @@ export class DiscussionService {
         },
       },
     });
-    return replys;
+    return replies;
   }
 
   async findAllUserReplies(user: number) {
-    const replys = await this.replyRepository.find({
+    const replies = await this.replyRepository.find({
       relations: [
         'replyStatus',
         'replyStatus.replyStatusType',
         'replyStatus.replyStatusReasonType',
         'author',
+        'discussion',
       ],
       where: {
         author: {
-          id: user
-        }
+          id: user,
+        },
       },
     });
-    return replys;
+    return replies;
   }
-  
+
   async findAllUserDiscussions(user: number) {
     const discussions = await this.discussionRepository.find({
       relations: [
@@ -391,11 +471,14 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
       ],
       where: {
         author: {
-          id: user
-        }
+          id: user,
+        },
       },
     });
 
@@ -415,7 +498,10 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
-        'report'
+        'report',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
       ],
       // where: {
       //   discussionStatus: {
@@ -423,13 +509,13 @@ export class DiscussionService {
       //   },
       // },
     });
-    let finalDiscussions: Discussion[] = []
+    let finalDiscussions: Discussion[] = [];
     discussions.forEach((discussion) => {
-      if(discussion.report[0]?.id){
-        finalDiscussions.push(discussion)
+      if (discussion.report[0]?.id) {
+        finalDiscussions.push(discussion);
       }
-    })
-    return finalDiscussions
+    });
+    return finalDiscussions;
   }
 
   async findAllBookmarkedDiscussions(user: number) {
@@ -445,6 +531,9 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
       ],
       where: {
         // discussionStatus: {

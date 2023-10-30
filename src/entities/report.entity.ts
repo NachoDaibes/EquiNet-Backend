@@ -25,7 +25,7 @@ export class Report{
     reply: Reply
 
     @ManyToOne(() => Discussion, (discussion) => discussion.report, {nullable: true})
-    @JoinColumn({name: 'report_Id'})
+    @JoinColumn({name: 'discussion_Id'})
     discussion: Discussion
 
     @ManyToOne(() => Type, (type) => type.reportReason)

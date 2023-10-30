@@ -19,7 +19,7 @@ export class TopicStatus{
     statusRegistrationDateTime: Date
 
     @ManyToOne(() => Topic, (topic) => topic.topicStatus)
-    @JoinColumn({name: 'publication_Id'})
+    @JoinColumn({name: 'topic_Id'})
     topic: Topic
 
     @BeforeInsert()

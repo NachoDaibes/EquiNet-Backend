@@ -1,4 +1,10 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -24,58 +30,76 @@ export class UserService {
     @InjectRepository(UserProfileStatus)
     private readonly userProfileStatusRepository: Repository<UserProfileStatus>,
     private readonly entityManager: EntityManager,
-    private readonly typeService: TypeService
-  ){}
+    private readonly typeService: TypeService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    return 'This create'
+    return 'This create';
   }
 
   async findAll() {
-    const users = await this.userRepository.find({})
-    return users
+    return  await this.userRepository.find({
+      relations: [
+        'legalPerson',
+        'individualPerson',
+        'userStatus',
+        'userStatus.userStatusType',
+        'userStatus.userStatusReasonType',
+      ],
+    });
   }
 
   async findOne(id: number) {
-
-    const userStatusActivo = await this.typeService.findTypeByCode('USTActivo')
-
     const user = await this.userRepository.findOne({
-      relations: ['legalPerson', 'individualPerson', 'userStatus', 'legalPerson', 'individualPerson', 'userStatus.userStatusType'],
+      relations: [
+        'legalPerson',
+        'individualPerson',
+        'legalPerson',
+        'individualPerson',
+        'userStatus.userStatusType',
+        
+      ],
       where: {
         id: id,
-        // userStatus: {
-        //   userStatusType: userStatusActivo
-        // }
-      }
-    })
+      },
+    });
 
-    if(!user) throw new HttpException('No existe un usuario con id = '+ id, HttpStatus.NOT_FOUND)
+    if (!user)
+      throw new HttpException(
+        'No existe un usuario con id = ' + id,
+        HttpStatus.NOT_FOUND,
+      );
 
-    return user
+    return user;
   }
 
   async update(updateUserDto: UpdateUserDto) {
-    
-    const user = await this.userRepository.findOne({where: {id: updateUserDto.id}})
-    
-    if(!user){
-      return new BadRequestException('No existe un usuario con el id: ' + updateUserDto.id)
+    const user = await this.userRepository.findOne({
+      where: { id: updateUserDto.id },
+    });
+
+    if (!user) {
+      return new BadRequestException(
+        'No existe un usuario con el id: ' + updateUserDto.id,
+      );
     }
 
-    const usertoUpdate = await this.userRepository.preload({id: updateUserDto.id, ...updateUserDto})
+    const usertoUpdate = await this.userRepository.preload({
+      id: updateUserDto.id,
+      ...updateUserDto,
+    });
 
-    let userFinal
+    let userFinal;
     await this.entityManager.transaction(async (transaction) => {
       try {
-        console.log(transaction)
-        userFinal = await transaction.save(usertoUpdate)
+        console.log(transaction);
+        userFinal = await transaction.save(usertoUpdate);
       } catch (error) {
         throw new Error(error);
       }
-    })
+    });
 
-    return userFinal
+    return userFinal;
   }
 
   async remove(id: number) {
@@ -93,7 +117,7 @@ export class UserService {
     );
 
     const userStatus = this.userStatusRepository.create({
-      userStatusType: userStatusInactivo
+      userStatusType: userStatusInactivo,
     });
 
     user.userStatus.push(userStatus);
