@@ -431,6 +431,7 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
         'author',
         'discussion',
+        'discussion.author'
       ],
       where: {
         replyLikes: {
@@ -451,6 +452,7 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
         'author',
         'discussion',
+        'discussion.author'
       ],
       where: {
         author: {
@@ -516,6 +518,92 @@ export class DiscussionService {
       }
     });
     return finalDiscussions;
+  }
+
+  async findAllDisussionReports(id: number) {
+    const discussions = await this.discussionRepository.find({
+      relations: [
+        'discussionStatus',
+        'discussionStatus.discussionStatusType',
+        'discussionStatus.discussionStatusReasonType',
+        'topic',
+        'author',
+        'reply',
+        'reply.author',
+        'report',
+        'reply.replyStatus',
+        'reply.replyStatus.replyStatusType',
+        'reply.replyStatus.replyStatusReasonType',
+      ],
+      where: {
+        id: id
+      }
+    });
+
+    let finalDiscussions: Discussion[] = [];
+    discussions.forEach((discussion) => {
+      if (discussion.report[0]?.id) {
+        finalDiscussions.push(discussion);
+      }
+    });
+    if(finalDiscussions.length < 1){
+      throw new NotFoundException('La publicación con el id ingresado no tiene reportes')
+    }
+
+    return finalDiscussions;
+  }
+
+  async findAllReportedReplies(){
+    const replies = await this.replyRepository.find({
+      relations: [
+        'replyStatus',
+        'replyStatus.replyStatusType',
+        'replyStatus.replyStatusReasonType',
+        'report',
+        'author',
+        'discussion',
+        'discussion.author'
+      ]
+    })
+
+    let finalReplies: Reply[] = [];
+    replies.forEach((reply) => {
+      if (reply.report[0]?.id) {
+        finalReplies.push(reply);
+      }
+    });
+
+    return finalReplies
+  }
+
+  async findAllReplyReports(id: number){
+    const replies = await this.replyRepository.find({
+      relations: [
+        'replyStatus',
+        'replyStatus.replyStatusType',
+        'replyStatus.replyStatusReasonType',
+        'report',
+        'author',
+        'discussion',
+        'discussion.author'
+      ],
+      where: {
+        id: id
+      }
+    })
+
+    let finalReplies: Reply[] = [];
+    replies.forEach((reply) => {
+      if (reply.report[0]?.id) {
+        finalReplies.push(reply);
+      }
+    });
+
+    if(finalReplies.length < 1){
+      throw new NotFoundException('La respuesta con el id ingresado no tiene reportes')
+    }
+
+    return finalReplies
   }
 
   async findAllBookmarkedDiscussions(user: number) {

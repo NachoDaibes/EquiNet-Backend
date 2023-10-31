@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Headers, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Headers, HttpException, HttpStatus, Query, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/registerAuth.dto';
 import { LoginAuthDto } from './dto/loginAuth.dto';
@@ -21,6 +21,11 @@ export class AuthController {
   @Post('sendEmail')
   sendEmail(@Body() emailDto: EmailDto){
     return this.authService.sendEmailCode(emailDto)
+  }
+
+  @Get('validateCode')
+  validateCode(@Query('codigoGenerado') codigoGenerado: string, @Query('codigoIngresado') codigoIngresado: string){
+    return this.authService.validateCode(codigoGenerado, codigoIngresado)
   }
   
   @Post('login')

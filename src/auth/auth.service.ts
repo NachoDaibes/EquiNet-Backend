@@ -160,6 +160,7 @@ export class AuthService {
   async sendEmailCode(emailDto: EmailDto) {
     //se genera un código aleatorio de 4 dígitos
     const codigo = Math.floor(1000 + Math.random() * 9000).toString();
+    let response: Object
     try {
       await this.emailService.sendEmail(
         emailDto.email,
@@ -167,7 +168,9 @@ export class AuthService {
         `Su código verificador de EquiNet es ${codigo}`,
       );
 
-      return codigo
+      return response = {
+        code: codigo
+      }
     } catch (error) {
       throw new Error("Error al enviar mail" + error);
     }

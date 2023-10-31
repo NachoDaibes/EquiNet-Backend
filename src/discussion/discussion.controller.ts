@@ -122,10 +122,25 @@ export class DiscussionController {
   findAllReportedDiscussions(){
     return this.discussionService.findAllReportedDiscussions()
   }
+  
+  @Get('/findAllReportedReplies')
+  findAllReportedReplies(){
+    return this.discussionService.findAllReportedReplies()
+  }
 
   @Get('findOneDiscussion/:id')
   findOneDiscussion(@Param('id') id: string) {
     return this.discussionService.findOneDiscussion(+id);
+  }
+  
+  @Get('findAllDisussionReports/:id')
+  findAllDisussionReports(@Param('id') id: string) {
+    return this.discussionService.findAllDisussionReports(+id);
+  }
+  
+  @Get('findAllReplyReports/:id')
+  findAllReplyReports(@Param('id') id: string) {
+    return this.discussionService.findAllReplyReports(+id);
   }
   
   @Get('findOneReply/:id')
