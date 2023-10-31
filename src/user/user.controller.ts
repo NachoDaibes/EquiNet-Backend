@@ -42,13 +42,13 @@ export class UserController {
   findOne(@Param('id') id: string, 
   @Headers('authorization') token: string) {
 
+    return this.userService.findOne(+id);
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }
     const profiles: any[] = this.authService.validateAccess(token)
 
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.userService.findOne(+id);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
     }

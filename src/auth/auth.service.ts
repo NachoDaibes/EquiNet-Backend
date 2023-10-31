@@ -39,6 +39,7 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
+  // private codigo: string
   async registerUser(
     registerAuthDto: RegisterAuthDto,
     validationCode: Boolean,
@@ -160,7 +161,7 @@ export class AuthService {
   async sendEmailCode(emailDto: EmailDto) {
     //se genera un código aleatorio de 4 dígitos
     const codigo = Math.floor(1000 + Math.random() * 9000).toString();
-    let response: Object
+    let response: Object;
     try {
       await this.emailService.sendEmail(
         emailDto.email,
@@ -168,11 +169,12 @@ export class AuthService {
         `Su código verificador de EquiNet es ${codigo}`,
       );
 
-      return response = {
-        code: codigo
-      }
+      // this.codigo = codigo
+      return (response = {
+        code: codigo,
+      });
     } catch (error) {
-      throw new Error("Error al enviar mail" + error);
+      throw new Error('Error al enviar mail' + error);
     }
   }
 
