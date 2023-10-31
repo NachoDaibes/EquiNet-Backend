@@ -146,6 +146,15 @@ export class DiscussionService {
 
     let finalDiscussions = [];
     for (const discussion of discussions) {
+      const likes = await this.discussionRepository.count({
+        where: {
+          discussionLikes: {
+            discussion: {
+              id: discussion.id
+            }
+          }
+        }
+      })
       const countReplies = await this.replyRepository.count({
         where: {
           discussion: {
@@ -157,6 +166,7 @@ export class DiscussionService {
       finalDiscussions.push({
         discussion: discussion,
         countReplies: countReplies,
+        countLikes: likes
       });
     }
 
@@ -509,6 +519,7 @@ export class DiscussionService {
         'reply',
         'reply.author',
         'report',
+        'report.reason',
         'reply.replyStatus',
         'reply.replyStatus.replyStatusType',
         'reply.replyStatus.replyStatusReasonType',
@@ -539,6 +550,7 @@ export class DiscussionService {
         'reply',
         'reply.author',
         'report',
+        'report.reason',
         'reply.replyStatus',
         'reply.replyStatus.replyStatusType',
         'reply.replyStatus.replyStatusReasonType',
@@ -568,6 +580,7 @@ export class DiscussionService {
         'replyStatus.replyStatusType',
         'replyStatus.replyStatusReasonType',
         'report',
+        'report.reason',
         'author',
         'discussion',
         'discussion.author',
@@ -592,6 +605,7 @@ export class DiscussionService {
         'replyStatus.replyStatusType',
         'replyStatus.replyStatusReasonType',
         'report',
+        'report.reason',
         'author',
         'discussion',
         'discussion.author',
