@@ -193,7 +193,13 @@ export class DiscussionService {
   async findOneReply(id: number){
     const reply = await this.replyRepository.findOne({
       relations: [
-
+        'replyStatus',
+        'replyStatus.replyStatusType',
+        'replyStatus.replyStatusReasonType',
+        'author',
+        'discussion',
+        'discussion.author',
+        'discussion.topic'
       ],
       where: {
         id: id
@@ -431,7 +437,8 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
         'author',
         'discussion',
-        'discussion.author'
+        'discussion.author',
+        'discussion.topic'
       ],
       where: {
         replyLikes: {
@@ -452,7 +459,8 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
         'author',
         'discussion',
-        'discussion.author'
+        'discussion.author', 
+        'discussion.topic'
       ],
       where: {
         author: {
@@ -562,7 +570,8 @@ export class DiscussionService {
         'report',
         'author',
         'discussion',
-        'discussion.author'
+        'discussion.author',
+        'discussion.topic'
       ]
     })
 
@@ -585,7 +594,8 @@ export class DiscussionService {
         'report',
         'author',
         'discussion',
-        'discussion.author'
+        'discussion.author',
+        'discussion.topic'
       ],
       where: {
         id: id
