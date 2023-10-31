@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Publication } from './publication.entity';
 import { Disability } from './disability.entity';
+import { Topic } from './topic.entity';
 
 @Entity({ name: 'Image' })
 export class Image {
@@ -30,4 +31,9 @@ export class Image {
     orphanedRowAction: 'delete',
   })
   disability: Disability
+
+  @OneToOne(() => Topic, (topic) => topic.image, {
+    orphanedRowAction: 'delete'
+  })
+  topic: Topic
 }

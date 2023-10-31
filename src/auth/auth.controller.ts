@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/registerAuth.dto';
 import { LoginAuthDto } from './dto/loginAuth.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { EmailDto } from './dto/email.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -13,8 +14,13 @@ export class AuthController {
     ) {}
 
   @Post('register')
-  registerUser(@Body() regiterAuthDto: RegisterAuthDto) {
-    return this.authService.registerUser(regiterAuthDto);
+  registerUser(@Body() regiterAuthDto: RegisterAuthDto, verificationCode: boolean) {
+    return this.authService.registerUser(regiterAuthDto, verificationCode);
+  }
+
+  @Post('sendEmail')
+  sendEmail(@Body() emailDto: EmailDto){
+    return this.authService.sendEmailCode(emailDto)
   }
   
   @Post('login')

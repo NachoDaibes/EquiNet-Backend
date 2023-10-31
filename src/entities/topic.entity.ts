@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Discussion } from "./discussion.entity"
 import { TopicStatus } from "./topicStatus.entity"
+import { Image } from "./image.entity"
 
 @Entity({name: 'Topic'})
 export class Topic{
@@ -16,6 +17,10 @@ export class Topic{
 
     @OneToMany(() => Discussion, (discussion) => discussion.topic)
     discussion: Discussion[]
+
+    // @OneToOne(() => Image, (image) => image.topic, {cascade: true, nullable: true})
+    // @JoinColumn({name: 'image_Id'})
+    // image: Image
 
     @Column({name: 'image', nullable: true})
     image: string

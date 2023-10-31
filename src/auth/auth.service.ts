@@ -1,7 +1,12 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { RegisterAuthDto } from './dto/registerAuth.dto';
 import { LoginAuthDto } from './dto/loginAuth.dto';
-import { hash, compare } from 'bcrypt'
+import { hash, compare } from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
@@ -12,10 +17,10 @@ import { UserProfile } from 'src/entities/userProfile.entity';
 import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
 import { EmailService } from 'src/email/email.service';
+import { EmailDto } from './dto/email.dto';
 
 @Injectable()
 export class AuthService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -31,120 +36,152 @@ export class AuthService {
     private readonly entityManager: EntityManager,
     private jwtAuthService: JwtService,
     private typeService: TypeService,
-    private emailService: EmailService
-  ){}
+    private emailService: EmailService,
+  ) {}
 
-  async registerUser(registerAuthDto: RegisterAuthDto) {
+  async registerUser(
+    registerAuthDto: RegisterAuthDto,
+    validationCode: Boolean,
+  ) {
+    if (validationCode == false) {
+      throw new BadRequestException('El código verificador es incorrecto');
+    }
 
-    const { email, password } = registerAuthDto
-    const plainToHash = await hash(password, 10)
-    
-    registerAuthDto = {...registerAuthDto, password:plainToHash}
-  
+    const { email, password } = registerAuthDto;
+    const plainToHash = await hash(password, 10);
+
+    registerAuthDto = { ...registerAuthDto, password: plainToHash };
+
     const user = await this.userRepository.findOne({
       where: {
-        email: email
-      }
-    }) 
+        email: email,
+      },
+    });
+    if (user)
+      throw new HttpException(
+        'Ya existe un usuario con el email ingresado',
+        404,
+      );
 
-    //se genera un código aleatorio de 4 dígitos
-    const codigo = Math.floor(1000 + Math.random() * 9000).toString()
-    await this.emailService.sendEmail(user.email, 'Validación de EquiNet', `Su código verificador de EquiNet es ${codigo}`)
+    const userProfileStatusTypeActivo = await this.typeService.findTypeByCode(
+      'UPSTActivo',
+    );
+    const userStatusActivo = await this.typeService.findTypeByCode('USTActivo');
+    const { profileType, ...toCreate } = registerAuthDto;
 
-    if(user) throw new HttpException('Ya existe un usuario con el email ingresado', 404)
-
-    const userProfileStatusTypeActivo = await this.typeService.findTypeByCode('UPSTActivo')
-    const userStatusActivo = await this.typeService.findTypeByCode('USTActivo')
-    const {profileType, ...toCreate} = registerAuthDto
-    
-    let profile
-    if(profileType == 'Miembro'){
-      profile = await this.profileRepository.findOne({where: {name: 'Miembro Activo'}})
+    let profile;
+    if (profileType == 'Miembro') {
+      profile = await this.profileRepository.findOne({
+        where: { name: 'Miembro Activo' },
+      });
     }
-    if(profileType == 'Propietario'){
-      profile = await this.profileRepository.findOne({where: {name: 'Propietario Activo'}})
+    if (profileType == 'Propietario') {
+      profile = await this.profileRepository.findOne({
+        where: { name: 'Propietario Activo' },
+      });
     }
-    if(profileType == 'Administrador'){
-      profile = await this.profileRepository.findOne({where: {name: 'Administrador Activo'}})
+    if (profileType == 'Administrador') {
+      profile = await this.profileRepository.findOne({
+        where: { name: 'Administrador Activo' },
+      });
     }
 
-    const u = this.userRepository.create(toCreate)
+    const u = this.userRepository.create(toCreate);
 
     const userProfileStatus = this.userProfileStatusRepository.create({
-       userProfileStatusType: userProfileStatusTypeActivo
-    })
+      userProfileStatusType: userProfileStatusTypeActivo,
+    });
 
     const userProfile = this.userProfileRepository.create({
       profile: profile,
-      userProfileStatus: [userProfileStatus]
-    })
+      userProfileStatus: [userProfileStatus],
+    });
 
     const userStatus = this.userStatusRepository.create({
-      userStatusType: userStatusActivo
-    })
+      userStatusType: userStatusActivo,
+    });
 
-    u.userStatus = [userStatus]
-    u.userProfile = [userProfile]
+    u.userStatus = [userStatus];
+    u.userProfile = [userProfile];
 
-    let userFinal
+    let userFinal;
     await this.entityManager.transaction(async (transaction) => {
       try {
-        console.log(transaction)
-        userFinal = await transaction.save(u)
+        console.log(transaction);
+        userFinal = await transaction.save(u);
       } catch (error) {
         throw new Error(error);
       }
-    })
+    });
 
-    return userFinal
+    return userFinal;
   }
 
   async loginUser(loginAuthDto: LoginAuthDto) {
-  
-    const {email, password} = loginAuthDto
+    const { email, password } = loginAuthDto;
 
     const user = await this.userRepository.findOne({
-      relations: ['userProfile', 'userProfile.profile', 'userProfile.profile.profileType', ],
+      relations: [
+        'userProfile',
+        'userProfile.profile',
+        'userProfile.profile.profileType',
+      ],
       where: {
-        email: email
-      }
-    }) 
+        email: email,
+      },
+    });
 
-    if(!user) throw new HttpException('User Not Found', 404)
+    if (!user) throw new HttpException('User Not Found', 404);
 
-    const checkPassword = await compare(password, user.password)
+    const checkPassword = await compare(password, user.password);
 
-    if(!checkPassword) throw new HttpException('Incorrect Password', 403)
-  
-    let profiles = []
+    if (!checkPassword) throw new HttpException('Incorrect Password', 403);
+
+    let profiles = [];
     for (const userProfile of user.userProfile) {
-      profiles.push(userProfile.profile.name)
+      profiles.push(userProfile.profile.name);
     }
 
     const payload = {
       id: user.id,
       username: user.username,
-      profiles: profiles
-    }
-    const token = await this.jwtAuthService.sign(payload)
+      profiles: profiles,
+    };
+    const token = await this.jwtAuthService.sign(payload);
 
     const data = {
       user: user,
-      token
+      token,
+    };
+
+    return data;
+  }
+
+  async sendEmailCode(emailDto: EmailDto) {
+    //se genera un código aleatorio de 4 dígitos
+    const codigo = Math.floor(1000 + Math.random() * 9000).toString();
+    try {
+      await this.emailService.sendEmail(
+        emailDto.email,
+        'Validación de EquiNet',
+        `Su código verificador de EquiNet es ${codigo}`,
+      );
+
+      return codigo
+    } catch (error) {
+      throw new Error("Error al enviar mail" + error);
     }
-
-    return data
   }
 
-  validateCode(codigoGenerado: string, codigoIngresado): Boolean{
-    return codigoGenerado == codigoIngresado
+  validateCode(codigoGenerado: string, codigoIngresado): Boolean {
+    return codigoGenerado == codigoIngresado;
   }
 
-  validateAccess(token: string){
-    const tokenFinal = token.slice(7)
-    const decodedToken: any = this.jwtAuthService.decode(tokenFinal)
-    const profiles = decodedToken.profiles
+  validateAccess(token: string) {
+    const tokenFinal = token.slice(7);
+    const decodedToken: any = this.jwtAuthService.decode(tokenFinal);
+    const profiles = decodedToken.profiles;
 
-    return profiles
-}
+    return profiles;
+  }
 }

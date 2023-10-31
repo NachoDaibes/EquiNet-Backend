@@ -33,7 +33,7 @@ export class AbmController {
   }
   @Post('/Topic')
   createTopic(@Body() createTopicDto: CreateTopicDto) {
-    return this.abmService.createTopicDto(createTopicDto);
+    return this.abmService.createTopic(createTopicDto);
   }
 
 

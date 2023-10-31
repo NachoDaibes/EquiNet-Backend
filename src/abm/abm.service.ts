@@ -111,7 +111,7 @@ export class AbmService {
     return finalPoliticalDivision
   }
 
-  async createTopicDto(createTopicDto: CreateTopicDto){
+  async createTopic(createTopicDto: CreateTopicDto){
     const topicStatusActivo = await this.typeService.findTypeByCode('DSActivo');
     const topic = this.topicRepository.create(createTopicDto)
     const topicStatus = this.topicStatusRepository.create({
