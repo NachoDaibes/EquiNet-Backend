@@ -16,5 +16,5 @@ export class CreateLocationDto {
   @ValidateNested()
   @Type(() => AssignDto)
   @IsNotEmpty()
-  departmentId: AssignDto;
+  department: AssignDto;
 }

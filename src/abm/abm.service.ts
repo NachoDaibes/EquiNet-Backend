@@ -64,10 +64,10 @@ export class AbmService {
   }
 
   async createLocation(createLocationDto: CreateLocationDto) {
-    const department = await this.departmentRepository.findOne({where: { id: createLocationDto.departmentId.id}})
+    // const department = await this.departmentRepository.findOne({where: { id: createLocationDto.departmentId.id}})
     const location = this.locationRepository.create(createLocationDto)
 
-    location.department = department    
+    // location.department = department    
 
     let finalLocation
     await this.entityManager.transaction(async (transaction) => {
@@ -81,10 +81,10 @@ export class AbmService {
   }
 
   async createDepartment(createDepartmentDto: CreateDepartmentDto) {
-    const politicalDivision = await this.politicalDivisionRepository.findOne({where: { id: createDepartmentDto.politicalDivisionId.id}})
+    // const politicalDivision = await this.politicalDivisionRepository.findOne({where: { id: createDepartmentDto.politicalDivisionId.id}})
     const department = this.departmentRepository.create(createDepartmentDto)
 
-    department.politicalDivision = politicalDivision
+    // department.politicalDivision = politicalDivision
     
     let finalDepartment
     await this.entityManager.transaction(async (transaction) => {
@@ -148,10 +148,14 @@ export class AbmService {
     return await this.politicalDivisionRepository.find()   
   }
   async findAllDepartments(){
-    return await this.departmentRepository.find()   
+    return await this.departmentRepository.find({
+      relations: ['politicalDivision'],
+    })   
   }
   async findAllLocations(){
-    return await this.locationRepository.find()   
+    return await this.locationRepository.find({
+      relations: ['department'],
+    })   
   }
   async findAllTopics(){
     const topicStatusActivo = await this.typeService.findTypeByCode('TSACtivo');

@@ -85,7 +85,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       username: 'sa',
       // password: 'r00t.R00T',
       password: 'Kalijose-25',
-      database: 'EquiNetDev',
+      database: 'EquiNetQA',
       // database: 'EquiNetPre',
       entities: [
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,

@@ -16,5 +16,5 @@ export class CreateDepartmentDto {
   @ValidateNested()
   @Type(() => AssignDto)
   @IsNotEmpty()
-  politicalDivisionId: AssignDto;
+  politicalDivision: AssignDto;
 }

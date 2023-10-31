@@ -24,7 +24,7 @@ export class Image {
   @ManyToOne(() => Publication, (publication) => publication.images, {
     orphanedRowAction: 'delete',
   })
-  @JoinColumn({ name: 'image_Id' })
+  @JoinColumn({ name: 'publication_Id' })
   publication: Publication;
   
   @OneToOne(() => Disability, (disability) => disability.image, {
