@@ -19,6 +19,8 @@ import { UpdateTopicDto } from './updateDtos/updateTopic.dto';
 import { TypeService } from 'src/type/type.service';
 import { DisabilityStatus } from 'src/entities/disabilityStatus.entity';
 import { TopicStatus } from 'src/entities/topicStatus.entity';
+import { CreateAccessDto } from './createDtos/createAccess.dto';
+import { Access } from 'src/entities/access.entity';
 
 @Injectable()
 export class AbmService {
@@ -41,7 +43,23 @@ export class AbmService {
     private readonly disabilityStatusRepository: Repository<DisabilityStatus>,
     @InjectRepository(TopicStatus)
     private readonly topicStatusRepository: Repository<TopicStatus>,
+    @InjectRepository(Access)
+    private readonly accessRepository: Repository<Access>,
   ){}
+
+  async createAccess(createAccessDto: CreateAccessDto){
+    const access = this.accessRepository.create(createAccessDto)
+    
+    let finalAccess
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        finalAccess = await transaction.save(access)
+      } catch (error) {
+        throw new Error(error);
+      }
+    })
+    return finalAccess
+  }
 
   async createDisability(createDisabilityDto: CreateDisabilityDto) {
     const disabilityStatusActivo = await this.typeService.findTypeByCode('DSActivo');

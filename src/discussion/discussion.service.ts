@@ -27,6 +27,7 @@ import { Type } from 'src/entities/type.entity';
 import { CreateReportReplyDto } from './dto/createReportReply.dto';
 import { Bookmark } from 'src/entities/bookmark.entity';
 import { UpdateReplyDto } from './dto/updateReply.dto';
+import { disconnect } from 'process';
 
 @Injectable()
 export class DiscussionService {
@@ -127,12 +128,10 @@ export class DiscussionService {
     });
   }
 
-  async findAllDiscussions() {
-    const discussionStatusActivo = await this.typeService.findTypeByCode(
-      'DiscussionSActivo',
-    );
+  async findAllDiscussions(userId: number) {
+    let isLikedByUser: boolean = false
 
-    const discussions = await this.discussionRepository.find({
+    const discussions: any = await this.discussionRepository.find({
       relations: [
         'discussionStatus',
         'discussionStatus.discussionStatusType',
@@ -141,6 +140,9 @@ export class DiscussionService {
         'author',
         'reply',
         'reply.author',
+        'discussionLikes',
+        'discussionLikes.user',
+        'discussionLikes.discussion'
       ],
     });
 
@@ -163,6 +165,13 @@ export class DiscussionService {
         },
       });
 
+      for (const discussionLike of discussion.discussionLikes) {
+        if(discussionLike.user.id == userId){
+          isLikedByUser = true
+        }
+      }
+
+      discussion.isLikedByUser = isLikedByUser
       finalDiscussions.push({
         discussion: discussion,
         countReplies: countReplies,
@@ -173,8 +182,9 @@ export class DiscussionService {
     return finalDiscussions;
   }
 
-  async findOneDiscussion(id: number) {
-    const discussion: Discussion = await this.discussionRepository.findOne({
+  async findOneDiscussion(discussionId: number, userId: number) {
+    let thisDiscussionIsLikedByUser: boolean = false
+    const discussion: any = await this.discussionRepository.findOne({
       relations: [
         'discussionStatus',
         'discussionStatus.discussionStatusType',
@@ -185,23 +195,48 @@ export class DiscussionService {
         'reply.author',
         'reply.replyStatus',
         'reply.replyStatus.replyStatusType',
+        'reply.replyLikes',
+        'reply.replyLikes.user',
+        'reply.replyLikes.reply',
+        'discussionLikes',
+        'discussionLikes.user',
+        'discussionLikes.discussion'
       ],
       where: {
-        id: id,
+        id: discussionId,
       },
     });
 
     if (!discussion)
       throw new HttpException(
-        'No existe una publicación con id = ' + id,
+        'No existe una publicación con id = ' + discussionId,
         HttpStatus.NOT_FOUND,
       );
+    
+    for (const discussionLike of discussion.discussionLikes) {
+      if(discussionLike.user.id == userId){
+        thisDiscussionIsLikedByUser = true
+      }
+    }
+
+    for(let i=0; i < discussion.reply.length; i++){
+      let thisReplyIsLikedByUser: boolean = false
+      for (const replyLikes of discussion.reply[i].replyLikes) {
+        if(replyLikes.user.id == userId){
+          thisReplyIsLikedByUser = true
+        }
+      }
+      discussion.reply[i].thisReplyIsLikedByUser = thisReplyIsLikedByUser
+    }
+
+    discussion.thisDiscussionIsLikedByUser = thisDiscussionIsLikedByUser
 
     return discussion;
   }
 
-  async findOneReply(id: number){
-    const reply = await this.replyRepository.findOne({
+  async findOneReply(replyId: number, userId: number){
+    let isLikedByUser: boolean = false
+    const reply: any = await this.replyRepository.findOne({
       relations: [
         'replyStatus',
         'replyStatus.replyStatusType',
@@ -209,18 +244,29 @@ export class DiscussionService {
         'author',
         'discussion',
         'discussion.author',
-        'discussion.topic'
+        'discussion.topic',
+        'replyLikes',
+        'replyLikes.user',
+        'replyLikes.reply'
       ],
       where: {
-        id: id
+        id: replyId
       }
     })
 
     if (!reply)
       throw new HttpException(
-        'No existe una respuesta con id = ' + id,
+        'No existe una respuesta con id = ' + replyId,
         HttpStatus.NOT_FOUND,
       );
+
+    for (const replyLike of reply.replyLikes) {
+      if(replyLike.user.id == userId){
+        isLikedByUser = true
+      }
+    }
+
+    reply.isLikedByUser = isLikedByUser
 
     return reply
   }
@@ -328,15 +374,21 @@ export class DiscussionService {
     const discussionLikes =
       this.discussionLikesRepository.create(discussionLikesDto);
 
+    discussion.likes++
     let finalDiscussionLikes;
+    let finalDiscussion
     await this.entityManager.transaction(async (transaction) => {
       try {
         finalDiscussionLikes = await transaction.save(discussionLikes);
+        finalDiscussion = await transaction.save(discussion)
       } catch (error) {
         throw new Error(error);
       }
     });
-    return finalDiscussionLikes;
+    return {
+      finalDiscussionLikes: finalDiscussionLikes,
+      discussionLikes: discussion.likes
+    };
   }
 
   async replyLikes(replyLikesDto: ReplyLikesDto) {
@@ -361,11 +413,14 @@ export class DiscussionService {
       );
 
     const replyLike = this.replyLikesRepository.create(replyLikesDto);
+    reply.likes++
 
     let finalReplyLikes;
+    let replyLikes
     await this.entityManager.transaction(async (transaction) => {
       try {
         finalReplyLikes = await transaction.save(replyLike);
+        replyLikes = await transaction.save(replyLike)
       } catch (error) {
         throw new Error(error);
       }

@@ -26,6 +26,9 @@ export class Discussion{
     @Column({name: 'image'})
     image: string
 
+    @Column({name: 'likes', nullable: true})
+    likes: number = 0
+
     @ManyToOne(()=> Topic, (topic) => topic.discussion)
     @JoinColumn({name: 'topic_Id'})
     topic: Topic

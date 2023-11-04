@@ -54,8 +54,8 @@ export class DiscussionController {
   }
   
   @Get()
-  findAllDiscussion() {
-    return this.discussionService.findAllDiscussions();
+  findAllDiscussion(@Query('userId') userId: string) {
+    return this.discussionService.findAllDiscussions(+userId);
   }
   
   @Get('/findAllDiscussionsByTopic/:topicId')
@@ -128,9 +128,9 @@ export class DiscussionController {
     return this.discussionService.findAllReportedReplies()
   }
 
-  @Get('findOneDiscussion/:id')
-  findOneDiscussion(@Param('id') id: string) {
-    return this.discussionService.findOneDiscussion(+id);
+  @Get('findOneDiscussion/:discussionId/:userId')
+  findOneDiscussion(@Param('discussionId') discussionId: string, @Param('userId') userId: string) {
+    return this.discussionService.findOneDiscussion(+discussionId, +userId);
   }
   
   @Get('findAllDisussionReports/:id')
@@ -143,9 +143,9 @@ export class DiscussionController {
     return this.discussionService.findAllReplyReports(+id);
   }
   
-  @Get('findOneReply/:id')
-  findOneReply(@Param('id') id: string) {
-    return this.discussionService.findOneReply(+id);
+  @Get('findOneReply/:replyId/:userId')
+  findOneReply(@Param('replyId') replyId: string, @Param('userId') userId: string) {
+    return this.discussionService.findOneReply(+replyId, +userId);
   }
 
   @Post('/reportDiscussion')

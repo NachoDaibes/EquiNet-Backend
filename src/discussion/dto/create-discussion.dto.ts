@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsObject, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from "class-validator";
 import { ImageDto } from "./image.dto";
 import { AssignDto } from "src/common/assign.dto";
 
@@ -18,6 +18,9 @@ export class CreateDiscussionDto {
     @IsString()
     @IsNotEmpty()
     description: string
+
+    @IsNumber()
+    likes: number
 
     // @IsArray()
     // @ValidateNested({ each: true })

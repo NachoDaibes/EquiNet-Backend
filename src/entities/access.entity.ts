@@ -17,7 +17,7 @@ export class Access{
     @Column({name: 'code', length: 50})
     code: string
 
-    @Column({name: 'url', length: 2000})
+    @Column({name: 'url', length: 2000, nullable: true})
     url: string
 
     @Column({name: 'order'})
