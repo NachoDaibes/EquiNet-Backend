@@ -56,13 +56,13 @@ export class UserController {
 
   @Patch()
   update(@Body() updateUserDto: UpdateUserDto, @Headers('authorization') token: string) {
+    return this.userService.update(updateUserDto);
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }
     const profiles: any[] = this.authService.validateAccess(token)
 
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.userService.update(updateUserDto);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
     }
@@ -70,13 +70,13 @@ export class UserController {
 
   @Delete()
   remove(@Query('idUserToDelete') idUserToDelete: string, @Query('idUserLoged') idUserLoged: string, @Headers('authorization') token: string) {
+    return this.userService.remove(+idUserToDelete);
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }
     const profiles: any[] = this.authService.validateAccess(token)
 
     if(profiles.includes('Administrador Activo') || idUserLoged === idUserToDelete){
-      return this.userService.remove(+idUserToDelete);
     }
     else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)

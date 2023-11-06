@@ -80,20 +80,20 @@ export class PublicationController {
   improvePublication(
     @Body() improvePublication: ImprovePublicationDto,
     @Headers('authorization') token: string,
-  ) {
+    ) {
+    return this.publicationService.improvePublication(improvePublication);
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
         HttpStatus.UNAUTHORIZED,
-      );
-    }
-    const profiles: any[] = this.authService.validateAccess(token);
-
-    if (
-      profiles.includes('Miembro Activo') ||
-      profiles.includes('Propietario Activo')
-    ) {
-      return this.publicationService.improvePublication(improvePublication);
+        );
+      }
+      const profiles: any[] = this.authService.validateAccess(token);
+      
+      if (
+        profiles.includes('Miembro Activo') ||
+        profiles.includes('Propietario Activo')
+        ) {
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
@@ -121,6 +121,7 @@ export class PublicationController {
 
   @Get('admin')
   findAllAdmin(@Headers('authorization') token: string) {
+    return this.publicationService.findAllByAdmin();
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
@@ -130,7 +131,6 @@ export class PublicationController {
     const profiles: any[] = this.authService.validateAccess(token);
 
     if (profiles.includes('Administrador Activo')) {
-      return this.publicationService.findAllByAdmin();
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
@@ -144,6 +144,7 @@ export class PublicationController {
     @Param('id') id: string,
     @Headers('authorization') token: string,
   ) {
+    return this.publicationService.findAllByUser(+id);
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
@@ -153,7 +154,6 @@ export class PublicationController {
     const profiles: any[] = this.authService.validateAccess(token);
 
     if (profiles.includes('Propietario Activo')) {
-      return this.publicationService.findAllByUser(+id);
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
@@ -173,6 +173,7 @@ export class PublicationController {
     @Body() updatePublicationDto: UpdatePublicationDto,
     @Headers('authorization') token: string,
   ) {
+    return this.publicationService.update(+id, updatePublicationDto);
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
@@ -185,7 +186,6 @@ export class PublicationController {
       profiles.includes('Miembro Activo') ||
       profiles.includes('Propietario Activo')
     ) {
-      return this.publicationService.update(+id, updatePublicationDto);
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
@@ -200,6 +200,7 @@ export class PublicationController {
     @Body() updatePublicationDto: UpdatePublicationByAdminDto,
     @Headers('authorization') token: string,
   ) {
+    return this.publicationService.update(+id, updatePublicationDto);
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
@@ -209,7 +210,6 @@ export class PublicationController {
     const profiles: any[] = this.authService.validateAccess(token);
 
     if (profiles.includes('Administrador Activo')) {
-      return this.publicationService.update(+id, updatePublicationDto);
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
@@ -220,6 +220,7 @@ export class PublicationController {
 
   @Delete(':id')
   remove(@Param('id') id: string, @Headers('authorization') token: string) {
+    return this.publicationService.remove(+id);
     if (!token) {
       throw new HttpException(
         'Token no proporcionado',
@@ -232,7 +233,6 @@ export class PublicationController {
       profiles.includes('Administrador Activo') ||
       profiles.includes('Propietario Activo')
     ) {
-      return this.publicationService.remove(+id);
     } else {
       throw new HttpException(
         'No tenés acceso a esta operación',
