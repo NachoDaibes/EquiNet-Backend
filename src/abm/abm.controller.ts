@@ -12,6 +12,7 @@ import { UpdateLocationDto } from './updateDtos/updateLocation.dto';
 import { UpdateTopicDto } from './updateDtos/updateTopic.dto';
 import { CreateAccessDto } from './createDtos/createAccess.dto';
 import { CreateProfileDto } from './createDtos/createProfile.dto';
+import { AssignDto } from 'src/common/assign.dto';
 
 @Controller('abm')
 export class AbmController {
@@ -37,7 +38,9 @@ export class AbmController {
     return this.abmService.createDisability(createdisabilityDto);
   }
   @Post('/PoliticalDivision')
-  createPoliticalDivision(@Body() createPoliticalDivisionDto: CreatePoliticalDivisionDto) {
+  createPoliticalDivision(
+    @Body() createPoliticalDivisionDto: CreatePoliticalDivisionDto,
+  ) {
     return this.abmService.createPoliticalDivision(createPoliticalDivisionDto);
   }
   @Post('/Department')
@@ -53,48 +56,52 @@ export class AbmController {
     return this.abmService.createTopic(createTopicDto);
   }
 
-
   @Get('/Disability')
-  findAllDisabilities(){
-    return this.abmService.findAllDisabilities()
+  findAllDisabilities() {
+    return this.abmService.findAllDisabilities();
   }
   @Get('/PoliticalDivision')
-  findAllPoliticalDivisions(){
-    return this.abmService.findAllPoliticalDivision()
+  findAllPoliticalDivisions() {
+    return this.abmService.findAllPoliticalDivision();
   }
   @Get('/Department')
-  findAllDepartments(){
-    return this.abmService.findAllDepartments()
+  findAllDepartments() {
+    return this.abmService.findAllDepartments();
   }
   @Get('/Location')
-  findAllLocations(){
-    return this.abmService.findAllLocations()
+  findAllLocations() {
+    return this.abmService.findAllLocations();
   }
   @Get('/Topic')
-  findAllTopics(){
-    return this.abmService.findAllTopics()
+  findAllTopics() {
+    return this.abmService.findAllTopics();
   }
-
 
   @Patch('/Disability')
-  updateDisability(@Body() updateDisabilityDto: UpdateDisabilityDto){
-    return this.abmService.updateDisability(updateDisabilityDto)
+  updateDisability(@Body() updateDisabilityDto: UpdateDisabilityDto) {
+    return this.abmService.updateDisability(updateDisabilityDto);
   }
   @Patch('/PoliticalDivision')
-  updatePoliticalDivision(@Body()  updatePoliticalDivision: UpdatePoliticalDivisionDto){
-    return this.abmService.updatePoliticalDivision(updatePoliticalDivision)
+  updatePoliticalDivision(
+    @Body() updatePoliticalDivision: UpdatePoliticalDivisionDto,
+  ) {
+    return this.abmService.updatePoliticalDivision(updatePoliticalDivision);
   }
   @Patch('/Department')
-  updateDepartment(@Body()  updateDepartmentDto: UpdateDepartmentDto){
-    return this.abmService.updateDepartment(updateDepartmentDto)
+  updateDepartment(@Body() updateDepartmentDto: UpdateDepartmentDto) {
+    return this.abmService.updateDepartment(updateDepartmentDto);
   }
   @Patch('/Location')
-  updateLocation(@Body()  updateLocationDto: UpdateLocationDto){
-    return this.abmService.updateLocation(updateLocationDto)
+  updateLocation(@Body() updateLocationDto: UpdateLocationDto) {
+    return this.abmService.updateLocation(updateLocationDto);
   }
   @Patch('/Topic')
-  updateTopic(@Body() updateTopicDto: UpdateTopicDto){
-    return this.abmService.updateTopic(updateTopicDto)
+  updateTopic(@Body() updateTopicDto: UpdateTopicDto) {
+    return this.abmService.updateTopic(updateTopicDto);
   }
 
+  @Delete('/PoliticalDivision')
+  deletePOliticalDivision(@Body() deleteDto: AssignDto) {
+    return this.abmService.deletePoliticalDivision(deleteDto);
+  }
 }
