@@ -104,4 +104,21 @@ export class AbmController {
   deletePOliticalDivision(@Body() deleteDto: AssignDto) {
     return this.abmService.deletePoliticalDivision(deleteDto);
   }
+
+
+
+  @Post('/backup')
+  createBackup(){
+    return this.abmService.createBackup()
+  }
+
+  @Get('/backup')
+  readBackups(){
+    return this.abmService.readBackups()
+  }
+
+  @Post('/restoreDatabase')
+  restoreDatabase(@Query('fileName') fileName: string){
+    return this.abmService.restoreBackup(fileName)
+  }
 }

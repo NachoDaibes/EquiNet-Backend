@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { Connection, EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/department.entity';
 import { PoliticalDivision } from 'src/entities/politicalDivision.entity';
@@ -26,6 +26,8 @@ import { Profile } from 'src/entities/profile.entity';
 import { ProfileAccess } from 'src/entities/profileAccess.entity';
 import { User } from 'src/entities/user.entity';
 import { AssignDto } from 'src/common/assign.dto';
+import * as fs from 'fs';
+import { exec } from 'child_process';
 
 @Injectable()
 export class AbmService {
@@ -55,6 +57,7 @@ export class AbmService {
     private readonly profileAccessRepository: Repository<ProfileAccess>,
     @InjectRepository(User)
     private readonly userepository: Repository<User>,
+    private connection: Connection
   ){}
 
   async createAccess(createAccessDto: CreateAccessDto){
@@ -375,5 +378,70 @@ export class AbmService {
       }
     });
     return pddf;
+  }
+
+  async createBackup(){
+    const datetime = new Date()
+    const query: string = `BACKUP DATABASE EquiNetDev TO DISK = '/var/opt/mssql/data/EquiNet-${datetime.toISOString()}.bak'`
+    try {
+      const queryRunner = this.connection.createQueryRunner()
+      await queryRunner.connect()
+      await queryRunner.query(query)
+      await queryRunner.release()      
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async readBackups(){
+    try {
+      await this.ejecutarComandoTerminal()
+    } catch (error) {
+      throw new Error(error);
+    }
+    
+    const rutaCarpeta = '/Users/nachodaibes/Desktop/prueba/data'
+    let finalFiles = []
+      return new Promise<string[]>((resolve, reject) => {
+        fs.readdir(rutaCarpeta, (error, archivos) => {
+          if (error) {
+            reject(error);
+          } else {
+            archivos.forEach((archivo) => {
+              if(archivo.substring(0,8) == 'EquiNet-' && archivo.substring(archivo.length - 4, archivo.length) == '.bak'){
+                finalFiles.push(archivo)
+              }
+            })
+            resolve(finalFiles);
+          }
+        });
+      });
+  }
+
+  async ejecutarComandoTerminal(): Promise<string> {
+    const comando = 'docker cp sql:/var/opt/mssql/data /Users/nachodaibes/Desktop/prueba'
+    return new Promise<string>((resolve, reject) => {
+      exec(comando, (error, stdout, stderr) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  }
+
+  async restoreBackup(fileName: string){
+    const query = `use master 
+    ALTER DATABASE EquiNetDev SET SINGLE_USER WITH ROLLBACK IMMEDIATE 
+    RESTORE DATABASE [EquiNetDev] FROM DISK = '/var/opt/mssql/data/${fileName}' WITH  FILE = 1, NOUNLOAD, STATS = 5 `
+    try {
+      const queryRunner = this.connection.createQueryRunner()
+      await queryRunner.connect()
+      await queryRunner.query(query)
+      await queryRunner.release()      
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
