@@ -20,6 +20,7 @@ export class CreateDiscussionDto {
     description: string
 
     @IsNumber()
+    @IsNotEmpty()
     likes: number
 
     // @IsArray()

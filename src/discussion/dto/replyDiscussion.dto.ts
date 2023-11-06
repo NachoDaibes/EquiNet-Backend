@@ -1,5 +1,5 @@
 import { Type } from "class-transformer"
-import { IsNotEmpty, IsObject, IsString, ValidateNested } from "class-validator"
+import { IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from "class-validator"
 import { AssignDto } from "src/common/assign.dto"
 import { Discussion } from "src/entities/discussion.entity"
 
@@ -11,6 +11,10 @@ export class ReplyDiscussionDto{
 
     @IsString()
     image: string
+
+    @IsNumber()
+    @IsNotEmpty()
+    likes: number
 
     @IsObject()
     @ValidateNested()
