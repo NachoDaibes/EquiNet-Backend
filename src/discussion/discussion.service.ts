@@ -129,7 +129,7 @@ export class DiscussionService {
   }
 
   async findAllDiscussions(userId: number) {
-    let isLikedByUser: boolean = false
+    let isLikedByUser: boolean = false;
 
     const discussions: any = await this.discussionRepository.find({
       relations: [
@@ -142,7 +142,7 @@ export class DiscussionService {
         'reply.author',
         'discussionLikes',
         'discussionLikes.user',
-        'discussionLikes.discussion'
+        'discussionLikes.discussion',
       ],
     });
 
@@ -152,11 +152,11 @@ export class DiscussionService {
         where: {
           discussionLikes: {
             discussion: {
-              id: discussion.id
-            }
-          }
-        }
-      })
+              id: discussion.id,
+            },
+          },
+        },
+      });
       const countReplies = await this.replyRepository.count({
         where: {
           discussion: {
@@ -166,16 +166,16 @@ export class DiscussionService {
       });
 
       for (const discussionLike of discussion.discussionLikes) {
-        if(discussionLike.user.id == userId){
-          isLikedByUser = true
+        if (discussionLike.user.id == userId) {
+          isLikedByUser = true;
         }
       }
 
-      discussion.isLikedByUser = isLikedByUser
+      discussion.isLikedByUser = isLikedByUser;
       finalDiscussions.push({
         discussion: discussion,
         countReplies: countReplies,
-        countLikes: likes
+        countLikes: likes,
       });
     }
 
@@ -183,7 +183,8 @@ export class DiscussionService {
   }
 
   async findOneDiscussion(discussionId: number, userId: number) {
-    let thisDiscussionIsLikedByUser: boolean = false
+    let thisDiscussionIsLikedByUser: boolean = false;
+    let thisDiscussionIsBookmarkedByUser: boolean = false;
     const discussion: any = await this.discussionRepository.findOne({
       relations: [
         'discussionStatus',
@@ -200,7 +201,9 @@ export class DiscussionService {
         'reply.replyLikes.reply',
         'discussionLikes',
         'discussionLikes.user',
-        'discussionLikes.discussion'
+        'discussionLikes.discussion',
+        'bookmark',
+        'bookmark.user',
       ],
       where: {
         id: discussionId,
@@ -212,31 +215,39 @@ export class DiscussionService {
         'No existe una publicación con id = ' + discussionId,
         HttpStatus.NOT_FOUND,
       );
-    
+
     for (const discussionLike of discussion.discussionLikes) {
-      if(discussionLike.user.id == userId){
-        thisDiscussionIsLikedByUser = true
+      if (discussionLike.user.id == userId) {
+        thisDiscussionIsLikedByUser = true;
       }
     }
 
-    for(let i=0; i < discussion.reply.length; i++){
-      let thisReplyIsLikedByUser: boolean = false
+    for (const bookmark of discussion.bookmark) {
+      if (bookmark.user.id == userId) {
+        thisDiscussionIsBookmarkedByUser = true;
+      }
+    }
+
+    for (let i = 0; i < discussion.reply.length; i++) {
+      let thisReplyIsLikedByUser: boolean = false;
       for (const replyLikes of discussion.reply[i].replyLikes) {
-        if(replyLikes.user.id == userId){
-          thisReplyIsLikedByUser = true
+        if (replyLikes.user.id == userId) {
+          thisReplyIsLikedByUser = true;
         }
       }
-      discussion.reply[i].thisReplyIsLikedByUser = thisReplyIsLikedByUser
+      discussion.reply[i].thisReplyIsLikedByUser = thisReplyIsLikedByUser;
     }
 
-    discussion.thisDiscussionIsLikedByUser = thisDiscussionIsLikedByUser
+    discussion.thisDiscussionIsLikedByUser = thisDiscussionIsLikedByUser;
+    discussion.thisDiscussionIsBookmarkedByUser =
+      thisDiscussionIsBookmarkedByUser;
 
     return discussion;
   }
 
-  async findOneReply(replyId: number, userId: number){
-    let isLikedByUser: boolean = false
-    const reply: any = await this.replyRepository.findOne({
+  async findOneReply(replyId: number, userId: number) {
+    let isLikedByUser: boolean = false;
+    const reply: Reply = await this.replyRepository.findOne({
       relations: [
         'replyStatus',
         'replyStatus.replyStatusType',
@@ -247,12 +258,12 @@ export class DiscussionService {
         'discussion.topic',
         'replyLikes',
         'replyLikes.user',
-        'replyLikes.reply'
+        'replyLikes.reply',
       ],
       where: {
-        id: replyId
-      }
-    })
+        id: replyId,
+      },
+    });
 
     if (!reply)
       throw new HttpException(
@@ -261,14 +272,12 @@ export class DiscussionService {
       );
 
     for (const replyLike of reply.replyLikes) {
-      if(replyLike.user.id == userId){
-        isLikedByUser = true
+      if (replyLike.user.id == userId) {
+        isLikedByUser = true;
       }
     }
 
-    reply.isLikedByUser = isLikedByUser
-
-    return reply
+    return reply;
   }
 
   async findAllDiscussionsByTopic(topicId: number) {
@@ -374,24 +383,82 @@ export class DiscussionService {
     const discussionLikes =
       this.discussionLikesRepository.create(discussionLikesDto);
 
-    discussion.likes++
+    discussion.likes++;
     let finalDiscussionLikes;
-    let finalDiscussion
+    let finalDiscussion;
     await this.entityManager.transaction(async (transaction) => {
       try {
         finalDiscussionLikes = await transaction.save(discussionLikes);
-        finalDiscussion = await transaction.save(discussion)
+        finalDiscussion = await transaction.save(discussion);
       } catch (error) {
         throw new Error(error);
       }
     });
     return {
       finalDiscussionLikes: finalDiscussionLikes,
-      discussionLikes: discussion.likes
+      discussionLikes: discussion.likes,
     };
   }
 
+  async removeReplyLike(replyId: number, userId: number) {
+    const reply = await this.replyRepository.findOne({
+      where: {
+        id: replyId
+      }
+    })
+    const replyLike: ReplyLikes =
+      await this.replyLikesRepository.findOne({
+        where: {
+          user: {
+            id: userId,
+          },
+          reply: {
+            id: replyId,
+          },
+        },
+      });
+
+    if (!replyLike)
+      throw new HttpException(
+        'El usuario ingreado no le ha dado me gusta a la publicación ' +
+          replyId,
+        HttpStatus.NOT_FOUND,
+      );
+    else {
+      reply.likes--
+      await this.replyLikesRepository.remove(replyLike);
+    }
+  }
   
+  async removeDiscussionLike(discussionId: number, userId: number) {
+    const discussion = await this.discussionRepository.findOne({
+      where: {
+        id: discussionId
+      }
+    })
+    const discussionLike: DiscussionLikes =
+      await this.discussionLikesRepository.findOne({
+        where: {
+          user: {
+            id: userId,
+          },
+          discussion: {
+            id: discussionId,
+          },
+        },
+      });
+
+    if (!discussionLike)
+      throw new HttpException(
+        'El usuario ingreado no le ha dado me gusta a la publicación ' +
+          discussionId,
+        HttpStatus.NOT_FOUND,
+      );
+    else {
+      discussion.likes--
+      await this.discussionLikesRepository.remove(discussionLike);
+    }
+  }
 
   async replyLikes(replyLikesDto: ReplyLikesDto) {
     const user = await this.userRepository.findOne({
@@ -415,14 +482,14 @@ export class DiscussionService {
       );
 
     const replyLike = this.replyLikesRepository.create(replyLikesDto);
-    reply.likes++
+    reply.likes++;
 
     let finalReplyLikes;
-    let replyLikes
+    let replyLikes;
     await this.entityManager.transaction(async (transaction) => {
       try {
         finalReplyLikes = await transaction.save(replyLike);
-        replyLikes = await transaction.save(replyLike)
+        replyLikes = await transaction.save(replyLike);
       } catch (error) {
         throw new Error(error);
       }
@@ -505,7 +572,7 @@ export class DiscussionService {
         'author',
         'discussion',
         'discussion.author',
-        'discussion.topic'
+        'discussion.topic',
       ],
       where: {
         replyLikes: {
@@ -526,8 +593,8 @@ export class DiscussionService {
         'replyStatus.replyStatusReasonType',
         'author',
         'discussion',
-        'discussion.author', 
-        'discussion.topic'
+        'discussion.author',
+        'discussion.topic',
       ],
       where: {
         author: {
@@ -615,8 +682,8 @@ export class DiscussionService {
         'reply.replyStatus.replyStatusReasonType',
       ],
       where: {
-        id: id
-      }
+        id: id,
+      },
     });
 
     let finalDiscussions: Discussion[] = [];
@@ -625,14 +692,16 @@ export class DiscussionService {
         finalDiscussions.push(discussion);
       }
     });
-    if(finalDiscussions.length < 1){
-      throw new NotFoundException('La publicación con el id ingresado no tiene reportes')
+    if (finalDiscussions.length < 1) {
+      throw new NotFoundException(
+        'La publicación con el id ingresado no tiene reportes',
+      );
     }
 
     return finalDiscussions;
   }
 
-  async findAllReportedReplies(){
+  async findAllReportedReplies() {
     const replies = await this.replyRepository.find({
       relations: [
         'replyStatus',
@@ -644,9 +713,9 @@ export class DiscussionService {
         'author',
         'discussion',
         'discussion.author',
-        'discussion.topic'
-      ]
-    })
+        'discussion.topic',
+      ],
+    });
 
     let finalReplies: Reply[] = [];
     replies.forEach((reply) => {
@@ -655,10 +724,10 @@ export class DiscussionService {
       }
     });
 
-    return finalReplies
+    return finalReplies;
   }
 
-  async findAllReplyReports(id: number){
+  async findAllReplyReports(id: number) {
     const replies = await this.replyRepository.find({
       relations: [
         'replyStatus',
@@ -670,12 +739,12 @@ export class DiscussionService {
         'author',
         'discussion',
         'discussion.author',
-        'discussion.topic'
+        'discussion.topic',
       ],
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
 
     let finalReplies: Reply[] = [];
     replies.forEach((reply) => {
@@ -684,11 +753,13 @@ export class DiscussionService {
       }
     });
 
-    if(finalReplies.length < 1){
-      throw new NotFoundException('La respuesta con el id ingresado no tiene reportes')
+    if (finalReplies.length < 1) {
+      throw new NotFoundException(
+        'La respuesta con el id ingresado no tiene reportes',
+      );
     }
 
-    return finalReplies
+    return finalReplies;
   }
 
   async findAllBookmarkedDiscussions(user: number) {

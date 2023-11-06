@@ -16,13 +16,13 @@ export class DiscussionController {
 
   @Post('createDiscussion')
   createDiscussion(@Body() createDiscussionDto: CreateDiscussionDto, @Headers('authorization') token: string) {
+    return this.discussionService.createDiscussion(createDiscussionDto);
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }
     const profiles: any[] = this.authService.validateAccess(token)
   
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.discussionService.createDiscussion(createDiscussionDto);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
     }
@@ -30,13 +30,13 @@ export class DiscussionController {
 
   @Post('reply')
   reply(@Body() replyDiscussionDto: ReplyDiscussionDto, @Headers('authorization') token: string) {
+    return this.discussionService.replyDiscussion(replyDiscussionDto);
     if(!token) {
       throw new HttpException('Token no proporcionado', HttpStatus.UNAUTHORIZED)
     }
     const profiles: any[] = this.authService.validateAccess(token)
   
     if(profiles.includes('Miembro Activo') || profiles.includes('Propietario Activo')){
-      return this.discussionService.replyDiscussion(replyDiscussionDto);
     }else{
       throw new HttpException('No tenés acceso a esta operación', HttpStatus.UNAUTHORIZED)
     }
@@ -165,5 +165,15 @@ export class DiscussionController {
   @Delete('removeReply/:id')
   removeReply(@Param('id') id: string){
     return this.discussionService.removeReply(+id)
+  }
+
+  @Delete('/removeDiscussionLike')
+  removeDiscussionLike(@Query('discussionId') discussionId: string, @Query('userId') userId: string){
+    return this.discussionService.removeDiscussionLike(+discussionId, +userId)
+  }
+  
+  @Delete('/removeReplyLike')
+  removeReplyLike(@Query('replyId') replyId: string, @Query('userId') userId: string){
+    return this.discussionService.removeReplyLike(+replyId, +userId)
   }
 }

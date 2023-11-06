@@ -105,8 +105,6 @@ export class AbmController {
     return this.abmService.deletePoliticalDivision(deleteDto);
   }
 
-
-
   @Post('/backup')
   createBackup(){
     return this.abmService.createBackup()
@@ -117,7 +115,7 @@ export class AbmController {
     return this.abmService.readBackups()
   }
 
-  @Post('/restoreDatabase')
+  @Post('/restore')
   restoreDatabase(@Query('fileName') fileName: string){
     return this.abmService.restoreBackup(fileName)
   }
