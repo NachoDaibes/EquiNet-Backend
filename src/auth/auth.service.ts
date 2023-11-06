@@ -143,10 +143,18 @@ export class AuthService {
       profiles.push(userProfile.profile.name);
     }
 
+    let access = []
+    for (const userProfile of user.userProfile) {
+      for (const profileAccess of userProfile.profile.profileAccess) {
+        access.push(profileAccess.access.name)
+      }
+    }
+
     const payload = {
       id: user.id,
       username: user.username,
       profiles: profiles,
+
     };
     const token = await this.jwtAuthService.sign(payload);
 

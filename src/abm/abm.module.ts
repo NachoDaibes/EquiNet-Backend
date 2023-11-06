@@ -20,6 +20,7 @@ import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
 import { EmailService } from 'src/email/email.service';
 import { Access } from 'src/entities/access.entity';
+import { ProfileAccess } from 'src/entities/profileAccess.entity';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { Access } from 'src/entities/access.entity';
       Profile,
       UserProfileStatus,
       UserStatus,
-      Access 
+      Access,
+      ProfileAccess
     ]),
   ],
   controllers: [AbmController],

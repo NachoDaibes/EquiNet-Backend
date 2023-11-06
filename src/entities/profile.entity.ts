@@ -15,7 +15,7 @@ export class Profile{
     @OneToMany(() => ProfileStatus, (profileStatus) => profileStatus.profile)
     profileStatus: ProfileStatus[]
 
-    @OneToMany(() => ProfileAccess, (profileAccess) => profileAccess.profile)
+    @OneToMany(() => ProfileAccess, (profileAccess) => profileAccess.profile, {cascade: true})
     profileAccess: ProfileAccess[]
 
     @ManyToOne(() => ProfileType, (profileType) => profileType.profile)

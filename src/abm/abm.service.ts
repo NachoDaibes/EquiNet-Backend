@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/department.entity';
@@ -21,6 +21,10 @@ import { DisabilityStatus } from 'src/entities/disabilityStatus.entity';
 import { TopicStatus } from 'src/entities/topicStatus.entity';
 import { CreateAccessDto } from './createDtos/createAccess.dto';
 import { Access } from 'src/entities/access.entity';
+import { CreateProfileDto } from './createDtos/createProfile.dto';
+import { Profile } from 'src/entities/profile.entity';
+import { ProfileAccess } from 'src/entities/profileAccess.entity';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AbmService {
@@ -45,6 +49,12 @@ export class AbmService {
     private readonly topicStatusRepository: Repository<TopicStatus>,
     @InjectRepository(Access)
     private readonly accessRepository: Repository<Access>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
+    @InjectRepository(ProfileAccess)
+    private readonly profileAccessRepository: Repository<ProfileAccess>,
+    @InjectRepository(User)
+    private readonly userepository: Repository<User>,
   ){}
 
   async createAccess(createAccessDto: CreateAccessDto){
@@ -59,6 +69,70 @@ export class AbmService {
       }
     })
     return finalAccess
+  }
+
+  async createProfile(createProfileDto: CreateProfileDto, userId: number){
+
+    const user = await this.userepository.findOne({
+      relations: [
+        'userProfile',
+        'userProfile.profile',
+        'userProfile.profile.profileAccess',
+        'userProfile.profile.profileAccess.access', 
+      ],
+      where: {id: userId}
+    })
+
+    let access = []
+    for (const userProfile of user.userProfile) {
+      for (const profileAccess of userProfile.profile.profileAccess) {
+        access.push(profileAccess.access.name)
+      }
+    }
+
+
+    const profile = this.profileRepository.create(createProfileDto)
+
+    // for (const access of createProfileDto.access) {
+    //   const accessExist = await this.accessRepository.findOne({
+    //     where: {
+    //       code: access.code
+    //     }
+    //   })
+
+    //   if(!accessExist){
+    //     throw new NotFoundException('No existe un acceso asociado al código '+ access.code)
+    //   }
+
+    //   const profileAccess = this.profileAccessRepository.create({
+    //     profile: profile,
+    //     access: access
+    //   })
+
+    //   let finalProfileAccess
+    //   await this.entityManager.transaction(async (transaction) => {
+    //     try {
+    //       finalProfileAccess = await transaction.save(profileAccess)
+    //     } catch (error) {
+    //       throw new Error(error);
+    //     }
+    //   })
+    // }
+
+    let finalProfile
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        finalProfile = await transaction.save(profile)
+      } catch (error) {
+        throw new Error(error);
+      }
+    })
+    return finalProfile
+  }
+
+  async findAllAccess(){
+
+    return await this.accessRepository.find()
   }
 
   async createDisability(createDisabilityDto: CreateDisabilityDto) {

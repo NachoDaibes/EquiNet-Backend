@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AbmService } from './abm.service';
 import { CreateDisabilityDto } from './createDtos/disability.dto';
 import { CreatePoliticalDivisionDto } from './createDtos/politicalDivision.dto';
@@ -11,6 +11,7 @@ import { UpdateDepartmentDto } from './updateDtos/updateDepartment.dto';
 import { UpdateLocationDto } from './updateDtos/updateLocation.dto';
 import { UpdateTopicDto } from './updateDtos/updateTopic.dto';
 import { CreateAccessDto } from './createDtos/createAccess.dto';
+import { CreateProfileDto } from './createDtos/createProfile.dto';
 
 @Controller('abm')
 export class AbmController {
@@ -19,6 +20,16 @@ export class AbmController {
   @Post('/Access')
   createAccess(@Body() createAccessDto: CreateAccessDto){
     return this.abmService.createAccess(createAccessDto)
+  }
+  
+  @Post('/Profile')
+  createProfile(@Body() createProfileDto: CreateProfileDto, @Query('userId') userId: string){
+    return this.abmService.createProfile(createProfileDto, +userId)
+  }
+  
+  @Get('/Access')
+  findAllAccess(){
+    return this.abmService.findAllAccess()
   }
 
   @Post('/Disability')
