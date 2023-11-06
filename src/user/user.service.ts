@@ -45,6 +45,10 @@ export class UserService {
         'userStatus',
         'userStatus.userStatusType',
         'userStatus.userStatusReasonType',
+        'userProfile',
+        'userProfile.profile',
+        'userProfile.profile.profileAccess',
+        'userProfile.profile.profileAccess.access',
       ],
     });
   }
@@ -57,7 +61,10 @@ export class UserService {
         'legalPerson',
         'individualPerson',
         'userStatus.userStatusType',
-        
+        'userProfile',
+        'userProfile.profile',
+        'userProfile.profile.profileAccess',
+        'userProfile.profile.profileAccess.access',
       ],
       where: {
         id: id,

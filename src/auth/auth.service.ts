@@ -125,7 +125,8 @@ export class AuthService {
       relations: [
         'userProfile',
         'userProfile.profile',
-        'userProfile.profile.profileType',
+        'userProfile.profile.profileAccess',
+        'userProfile.profile.profileAccess.access',
       ],
       where: {
         email: email,
@@ -138,11 +139,6 @@ export class AuthService {
 
     if (!checkPassword) throw new HttpException('Incorrect Password', 403);
 
-    let profiles = [];
-    for (const userProfile of user.userProfile) {
-      profiles.push(userProfile.profile.name);
-    }
-
     let access = []
     for (const userProfile of user.userProfile) {
       for (const profileAccess of userProfile.profile.profileAccess) {
@@ -153,7 +149,7 @@ export class AuthService {
     const payload = {
       id: user.id,
       username: user.username,
-      profiles: profiles,
+      access: access,
 
     };
     const token = await this.jwtAuthService.sign(payload);
@@ -193,8 +189,8 @@ export class AuthService {
   validateAccess(token: string) {
     const tokenFinal = token.slice(7);
     const decodedToken: any = this.jwtAuthService.decode(tokenFinal);
-    const profiles = decodedToken.profiles;
+    const access = decodedToken.access;
 
-    return profiles;
+    return access;
   }
 }

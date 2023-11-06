@@ -73,51 +73,7 @@ export class AbmService {
 
   async createProfile(createProfileDto: CreateProfileDto, userId: number){
 
-    const user = await this.userepository.findOne({
-      relations: [
-        'userProfile',
-        'userProfile.profile',
-        'userProfile.profile.profileAccess',
-        'userProfile.profile.profileAccess.access', 
-      ],
-      where: {id: userId}
-    })
-
-    let access = []
-    for (const userProfile of user.userProfile) {
-      for (const profileAccess of userProfile.profile.profileAccess) {
-        access.push(profileAccess.access.name)
-      }
-    }
-
-
     const profile = this.profileRepository.create(createProfileDto)
-
-    // for (const access of createProfileDto.access) {
-    //   const accessExist = await this.accessRepository.findOne({
-    //     where: {
-    //       code: access.code
-    //     }
-    //   })
-
-    //   if(!accessExist){
-    //     throw new NotFoundException('No existe un acceso asociado al código '+ access.code)
-    //   }
-
-    //   const profileAccess = this.profileAccessRepository.create({
-    //     profile: profile,
-    //     access: access
-    //   })
-
-    //   let finalProfileAccess
-    //   await this.entityManager.transaction(async (transaction) => {
-    //     try {
-    //       finalProfileAccess = await transaction.save(profileAccess)
-    //     } catch (error) {
-    //       throw new Error(error);
-    //     }
-    //   })
-    // }
 
     let finalProfile
     await this.entityManager.transaction(async (transaction) => {
@@ -131,7 +87,6 @@ export class AbmService {
   }
 
   async findAllAccess(){
-
     return await this.accessRepository.find()
   }
 

@@ -39,9 +39,9 @@ export class PublicationController {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const profiles: any[] = this.authService.validateAccess(token);
+    const access: any[] = this.authService.validateAccess(token);
 
-    if (profiles.includes('Propietario Activo')) {
+    if (access.includes('Create Publication')) {
       return this.publicationService.createPublication(createPublicationDto);
     } else {
       throw new HttpException(
