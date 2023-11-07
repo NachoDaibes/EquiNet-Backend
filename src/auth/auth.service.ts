@@ -18,6 +18,7 @@ import { UserProfileStatus } from 'src/entities/userProfileStatus';
 import { UserStatus } from 'src/entities/userStatus.entity';
 import { EmailService } from 'src/email/email.service';
 import { EmailDto } from './dto/email.dto';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -139,10 +140,10 @@ export class AuthService {
 
     if (!checkPassword) throw new HttpException('Incorrect Password', 403);
 
-    let access = []
+    let access = [];
     for (const userProfile of user.userProfile) {
       for (const profileAccess of userProfile.profile.profileAccess) {
-        access.push(profileAccess.access.name)
+        access.push(profileAccess.access.name);
       }
     }
 
@@ -150,7 +151,6 @@ export class AuthService {
       id: user.id,
       username: user.username,
       access: access,
-
     };
     const token = await this.jwtAuthService.sign(payload);
 
@@ -160,6 +160,55 @@ export class AuthService {
     };
 
     return data;
+  }
+
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: changePasswordDto.userId,
+
+      }
+    });
+    if (!user) {
+      throw new HttpException(
+        'No existe un usuario con el id ingresado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const {currentPassword, password} = changePasswordDto
+
+    const checkPassword = await compare(
+      currentPassword,
+      user.password,
+    );
+    if (!checkPassword) throw new HttpException('Incorrect Password', 403);
+
+    const plainToHash = await hash(password, 10);
+    changePasswordDto = { ...changePasswordDto, password: plainToHash };
+
+    const userToUpdate = await this.userRepository.preload({
+      id: changePasswordDto.userId,
+      ...changePasswordDto
+    })
+
+    let userFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        userFinal = await transaction.save(userToUpdate);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return userFinal;
+  }
+
+  async restorePassword(changePasswordDto: ChangePasswordDto, validationCode: boolean){
+    if (validationCode == false) {
+      throw new BadRequestException('El código verificador es incorrecto');
+    }
+
+    this.changePassword(changePasswordDto)
   }
 
   async sendEmailCode(emailDto: EmailDto) {

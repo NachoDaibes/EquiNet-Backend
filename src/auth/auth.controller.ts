@@ -4,6 +4,7 @@ import { RegisterAuthDto } from './dto/registerAuth.dto';
 import { LoginAuthDto } from './dto/loginAuth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { EmailDto } from './dto/email.dto';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,6 +33,11 @@ export class AuthController {
   loginUser(@Body() loginAuthDto: LoginAuthDto) {
 
     return this.authService.loginUser(loginAuthDto);
+  }
+
+  @Post('/changePassword')
+  changePassowrd(@Body() changePasswordDto: ChangePasswordDto){
+    return this.authService.changePassword(changePasswordDto)
   }
 
 }
