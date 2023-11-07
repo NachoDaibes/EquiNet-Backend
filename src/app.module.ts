@@ -67,6 +67,7 @@ import { DiscussionModule } from './discussion/discussion.module';
 import { AbmModule } from './abm/abm.module';
 import { EmailModule } from './email/email.module';
 import { ReportsModule } from './reports/reports.module';
+import { FilesModule } from './files/files.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -85,7 +86,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
       username: 'sa',
       // password: 'r00t.R00T',
       password: 'Kalijose-25',
-      database: 'EquiNetDev',
+      database: 'EquiNetQA',
       // database: 'EquiNetPre',
       entities: [
         User, Access, AccessStatus, IndividualPerson, LegalPerson, Profile,
@@ -121,6 +122,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     AbmModule,
     EmailModule,
     ReportsModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService

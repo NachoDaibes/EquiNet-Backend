@@ -1,18 +1,19 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import { Access } from "./access.entity"
-import { Profile } from "./profile.entity"
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Access } from './access.entity';
+import { Profile } from './profile.entity';
 
-@Entity({name: 'ProfileAccess'})
-export class ProfileAccess{
+@Entity({ name: 'ProfileAccess' })
+export class ProfileAccess {
+  @PrimaryGeneratedColumn('increment', { name: 'id' })
+  id: number;
 
-    @PrimaryGeneratedColumn('increment', {name: 'id'})
-    id: number
+  @ManyToOne(() => Profile, (profile) => profile.profileAccess, {
+    orphanedRowAction: 'delete',
+  })
+  @JoinColumn({ name: 'profile_Id' })
+  profile: Profile;
 
-    @ManyToOne(()=> Profile, (profile) => profile.profileAccess)
-    @JoinColumn({name: 'profile_Id'})
-    profile: Profile
-
-    @ManyToOne(() => Access, (access) => access.profileAccess)
-    @JoinColumn({name: 'access_Id'})
-    access: Access
+  @ManyToOne(() => Access, (access) => access.profileAccess)
+  @JoinColumn({ name: 'access_Id' })
+  access: Access;
 }

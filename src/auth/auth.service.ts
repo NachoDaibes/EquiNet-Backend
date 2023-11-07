@@ -126,6 +126,7 @@ export class AuthService {
       relations: [
         'userProfile',
         'userProfile.profile',
+        'userProfile.profile.profileType',
         'userProfile.profile.profileAccess',
         'userProfile.profile.profileAccess.access',
       ],

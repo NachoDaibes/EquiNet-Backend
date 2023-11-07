@@ -13,6 +13,7 @@ import { UpdateTopicDto } from './updateDtos/updateTopic.dto';
 import { CreateAccessDto } from './createDtos/createAccess.dto';
 import { CreateProfileDto } from './createDtos/createProfile.dto';
 import { AssignDto } from 'src/common/assign.dto';
+import { UpdateProfileDto } from './updateDtos/updateProfile.dto';
 
 @Controller('abm')
 export class AbmController {
@@ -76,6 +77,10 @@ export class AbmController {
   findAllTopics() {
     return this.abmService.findAllTopics();
   }
+  @Get('/Profile')
+  findAllProfile() {
+    return this.abmService.findAllProfile();
+  }
 
   @Patch('/Disability')
   updateDisability(@Body() updateDisabilityDto: UpdateDisabilityDto) {
@@ -98,6 +103,10 @@ export class AbmController {
   @Patch('/Topic')
   updateTopic(@Body() updateTopicDto: UpdateTopicDto) {
     return this.abmService.updateTopic(updateTopicDto);
+  }
+  @Patch('/Profile')
+  updateProfile(@Body() updateProfileDto: UpdateProfileDto) {
+    return this.abmService.updateProfile(updateProfileDto);
   }
 
   @Delete('/PoliticalDivision')

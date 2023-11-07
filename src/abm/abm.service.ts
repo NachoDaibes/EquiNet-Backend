@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Connection, EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/department.entity';
@@ -28,6 +32,7 @@ import { User } from 'src/entities/user.entity';
 import { AssignDto } from 'src/common/assign.dto';
 import * as fs from 'fs';
 import { exec } from 'child_process';
+import { UpdateProfileDto } from './updateDtos/updateProfile.dto';
 
 @Injectable()
 export class AbmService {
@@ -57,40 +62,39 @@ export class AbmService {
     private readonly profileAccessRepository: Repository<ProfileAccess>,
     @InjectRepository(User)
     private readonly userepository: Repository<User>,
-    private connection: Connection
-  ){}
+    private connection: Connection,
+  ) {}
 
-  async createAccess(createAccessDto: CreateAccessDto){
-    const access = this.accessRepository.create(createAccessDto)
-    
-    let finalAccess
+  async createAccess(createAccessDto: CreateAccessDto) {
+    const access = this.accessRepository.create(createAccessDto);
+
+    let finalAccess;
     await this.entityManager.transaction(async (transaction) => {
       try {
-        finalAccess = await transaction.save(access)
+        finalAccess = await transaction.save(access);
       } catch (error) {
         throw new Error(error);
       }
-    })
-    return finalAccess
+    });
+    return finalAccess;
   }
 
-  async createProfile(createProfileDto: CreateProfileDto, userId: number){
+  async createProfile(createProfileDto: CreateProfileDto, userId: number) {
+    const profile = this.profileRepository.create(createProfileDto);
 
-    const profile = this.profileRepository.create(createProfileDto)
-
-    let finalProfile
+    let finalProfile;
     await this.entityManager.transaction(async (transaction) => {
       try {
-        finalProfile = await transaction.save(profile)
+        finalProfile = await transaction.save(profile);
       } catch (error) {
         throw new Error(error);
       }
-    })
-    return finalProfile
+    });
+    return finalProfile;
   }
 
-  async findAllAccess(){
-    return await this.accessRepository.find()
+  async findAllAccess() {
+    return await this.accessRepository.find();
   }
 
   async createDisability(createDisabilityDto: CreateDisabilityDto) {
@@ -229,6 +233,17 @@ export class AbmService {
 
     return topics;
   }
+  async findAllProfile() {
+    const profiles = await this.profileRepository.find({
+      relations: [
+        'profileStatus',
+        'profileStatus.profileStatusType',
+        'profileAccess',
+        'profileAccess.access',
+      ],
+    });
+    return profiles;
+  }
 
   async updateDisability(updateDisabilityDto: UpdateDisabilityDto) {
     const disability = await this.disabilityRepository.findOne({
@@ -340,7 +355,7 @@ export class AbmService {
         'No existe un tema con el id: ' + updateTopicDto.id,
       );
     }
-    const topicToUpdate = await this.locationRepository.preload({
+    const topicToUpdate = await this.topicRepository.preload({
       id: updateTopicDto.id,
       ...updateTopicDto,
     });
@@ -348,7 +363,31 @@ export class AbmService {
     await this.entityManager.transaction(async (transaction) => {
       try {
         console.log(transaction);
-        topicFinal = await transaction.save(topic);
+        topicFinal = await transaction.save(topicToUpdate);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+    return topicFinal;
+  }
+  async updateProfile(updateProfileDto: UpdateProfileDto) {
+    // const topic = await this.topicRepository.findOne({
+    //   where: { id: updateTopicDto.id },
+    // });
+    // if (!topic) {
+    //   return new BadRequestException(
+    //     'No existe un tema con el id: ' + updateTopicDto.id,
+    //   );
+    // }
+    const topicToUpdate = await this.profileRepository.preload({
+      id: updateProfileDto.id,
+      ...updateProfileDto,
+    });
+    let topicFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        console.log(transaction);
+        topicFinal = await transaction.save(topicToUpdate);
       } catch (error) {
         throw new Error(error);
       }
@@ -380,46 +419,50 @@ export class AbmService {
     return pddf;
   }
 
-  async createBackup(){
-    const datetime = new Date()
-    const query: string = `BACKUP DATABASE EquiNetDev TO DISK = '/var/opt/mssql/data/EquiNet-${datetime.toISOString()}.bak'`
+  async createBackup() {
+    const datetime = new Date();
+    const query: string = `BACKUP DATABASE EquiNetDev TO DISK = '/var/opt/mssql/data/EquiNet-${datetime.toISOString()}.bak'`;
     try {
-      const queryRunner = this.connection.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.query(query)
-      await queryRunner.release()      
+      const queryRunner = this.connection.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.query(query);
+      await queryRunner.release();
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async readBackups(){
+  async readBackups() {
     try {
-      await this.ejecutarComandoTerminal()
+      await this.ejecutarComandoTerminal();
     } catch (error) {
       throw new Error(error);
     }
-    
-    const rutaCarpeta = '/Users/nachodaibes/Desktop/prueba/data'
-    let finalFiles = []
-      return new Promise<string[]>((resolve, reject) => {
-        fs.readdir(rutaCarpeta, (error, archivos) => {
-          if (error) {
-            reject(error);
-          } else {
-            archivos.forEach((archivo) => {
-              if(archivo.substring(0,8) == 'EquiNet-' && archivo.substring(archivo.length - 4, archivo.length) == '.bak'){
-                finalFiles.push(archivo)
-              }
-            })
-            resolve(finalFiles);
-          }
-        });
+
+    const rutaCarpeta = '/Users/nachodaibes/Desktop/prueba/data';
+    let finalFiles = [];
+    return new Promise<string[]>((resolve, reject) => {
+      fs.readdir(rutaCarpeta, (error, archivos) => {
+        if (error) {
+          reject(error);
+        } else {
+          archivos.forEach((archivo) => {
+            if (
+              archivo.substring(0, 8) == 'EquiNet-' &&
+              archivo.substring(archivo.length - 4, archivo.length) == '.bak'
+            ) {
+              finalFiles.push(archivo);
+            }
+          });
+          resolve(finalFiles);
+        }
       });
+    });
   }
 
   async ejecutarComandoTerminal(): Promise<string> {
-    const comando = 'docker cp sql:/var/opt/mssql/data /Users/nachodaibes/Desktop/prueba'
+    const comando =
+      'docker cp sql:/var/opt/mssql/data /Users/nachodaibes/Desktop/prueba';
     return new Promise<string>((resolve, reject) => {
       exec(comando, (error, stdout, stderr) => {
         if (error) {
@@ -431,15 +474,15 @@ export class AbmService {
     });
   }
 
-  async restoreBackup(fileName: string){
+  async restoreBackup(fileName: string) {
     const query = `use master 
     ALTER DATABASE EquiNetDev SET SINGLE_USER WITH ROLLBACK IMMEDIATE 
-    RESTORE DATABASE [EquiNetDev] FROM DISK = '/var/opt/mssql/data/${fileName}' WITH  FILE = 1, NOUNLOAD, STATS = 5 `
+    RESTORE DATABASE [EquiNetDev] FROM DISK = '/var/opt/mssql/data/${fileName}' WITH  FILE = 1, NOUNLOAD, STATS = 5 `;
     try {
-      const queryRunner = this.connection.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.query(query)
-      await queryRunner.release()      
+      const queryRunner = this.connection.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.query(query);
+      await queryRunner.release();
     } catch (error) {
       throw new Error(error);
     }
