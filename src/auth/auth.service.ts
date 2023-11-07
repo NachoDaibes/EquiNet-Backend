@@ -204,12 +204,34 @@ export class AuthService {
     return userFinal;
   }
 
-  async restorePassword(changePasswordDto: ChangePasswordDto, validationCode: boolean){
+  async restorePassword(email: string, password: string, validationCode: boolean){
     if (validationCode == false) {
       throw new BadRequestException('El código verificador es incorrecto');
     }
 
-    this.changePassword(changePasswordDto)
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email
+      }
+    })
+
+    const plainToHash = await hash(password, 10);
+
+    const userToUpdate = await this.userRepository.preload({
+      id: user.id,
+      password: plainToHash
+    })
+
+    let userFinal;
+    await this.entityManager.transaction(async (transaction) => {
+      try {
+        userFinal = await transaction.save(userToUpdate);
+      } catch (error) {
+        throw new Error(error);
+      }
+    });
+
+    return userFinal;
   }
 
   async sendEmailCode(emailDto: EmailDto) {

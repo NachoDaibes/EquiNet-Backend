@@ -39,5 +39,10 @@ export class AuthController {
   changePassowrd(@Body() changePasswordDto: ChangePasswordDto){
     return this.authService.changePassword(changePasswordDto)
   }
+  
+  @Post('/restorePassword')
+  restorePassword(@Query('email') email: string, @Query('password') password: string, @Query('validationCode') validationCode: boolean){
+    return this.authService.restorePassword(email, password, validationCode)
+  }
 
 }
