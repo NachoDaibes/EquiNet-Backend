@@ -74,17 +74,17 @@ export class AuthService {
     let profile;
     if (profileType == 'Miembro') {
       profile = await this.profileRepository.findOne({
-        where: { name: 'Miembro Activo' },
+        where: { name: 'Miembro' },
       });
     }
     if (profileType == 'Propietario') {
       profile = await this.profileRepository.findOne({
-        where: { name: 'Propietario Activo' },
+        where: { name: 'Propietario' },
       });
     }
     if (profileType == 'Administrador') {
       profile = await this.profileRepository.findOne({
-        where: { name: 'Administrador Activo' },
+        where: { name: 'Administrador' },
       });
     }
 
