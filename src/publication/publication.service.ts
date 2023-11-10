@@ -95,6 +95,7 @@ export class PublicationService {
         'publicationDisability.disability',
         'publicationPosition',
         'publicationPosition.position',
+        'images'
       ],
     });
 

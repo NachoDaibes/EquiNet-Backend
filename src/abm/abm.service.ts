@@ -220,17 +220,9 @@ export class AbmService {
     });
   }
   async findAllTopics() {
-    const topicStatusActivo = await this.typeService.findTypeByCode('TSACtivo');
-
     const topics = await this.topicRepository.find({
       relations: ['topicStatus', 'topicStatus.topicStatusType'],
-      where: {
-        topicStatus: {
-          topicStatusType: topicStatusActivo,
-        },
-      },
     });
-
     return topics;
   }
   async findAllProfile() {
