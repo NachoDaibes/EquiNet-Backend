@@ -6,7 +6,7 @@ import { AssignDto } from 'src/common/assign.dto';
 export class CreateReportDto {
   
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @IsDateString()

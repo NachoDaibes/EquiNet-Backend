@@ -10,7 +10,7 @@ export class Report{
     @PrimaryGeneratedColumn('increment', {name: 'id'})
     id: number
 
-    @Column({name: 'description'})
+    @Column({name: 'description', nullable: true})
     description: string
 
     @Column({name: 'reportedAt'})
