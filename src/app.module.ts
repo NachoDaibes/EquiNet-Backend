@@ -68,6 +68,7 @@ import { AbmModule } from './abm/abm.module';
 import { EmailModule } from './email/email.module';
 import { ReportsModule } from './reports/reports.module';
 import { FilesModule } from './files/files.module';
+import { MercadoPagoModule } from './mercadoPago/mercadoPago.module';
 const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
 
 @Module({
@@ -123,6 +124,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/../common/envs`);
     EmailModule,
     ReportsModule,
     FilesModule,
+    MercadoPagoModule
   ],
   controllers: [AppController],
   providers: [AppService

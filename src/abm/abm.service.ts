@@ -33,6 +33,7 @@ import { AssignDto } from 'src/common/assign.dto';
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { UpdateProfileDto } from './updateDtos/updateProfile.dto';
+const mercadopago = require('mercadopago')
 
 @Injectable()
 export class AbmService {
